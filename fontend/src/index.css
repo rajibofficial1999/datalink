@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .primary-btn{
+        @apply bg-blue-600 text-white disabled:bg-blue-300 disabled:text-neutral-600 hover:bg-blue-700
+    }
+}
+
+:root {
+    --my-color: #fff;
+    /* or any other variables/style */
+}
+[data-theme='dark'] {
+    --my-color: #000;
+}
+[data-theme='pink'] {
+    --my-color: #ffabc8;
+}
+
+body {
+    background-color: var(--my-color);
+    width: 100vw;
+    overflow: hidden;
+}
+
+html {
+    width: 100vw;
+    overflow: hidden;
+}
