@@ -14,11 +14,12 @@ class SessionController extends Controller
 {
     public function create(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->only('username', 'password');
+        $credentials = $request->only('email', 'password');
 
         if(Auth::attempt($credentials, true)){
             $user = UserResource::make(Auth::user());
             $token = $user->createToken(time())->plainTextToken;
+
             return response()->json(['user' => $user, 'token' => $token], Response::HTTP_OK);
         }
 

@@ -99,7 +99,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Global "From" Address
+    | Global "DefaultForm" Address
     |--------------------------------------------------------------------------
     |
     | You may wish for all emails sent by your application to be sent from

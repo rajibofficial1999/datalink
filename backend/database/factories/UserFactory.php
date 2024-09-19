@@ -25,10 +25,9 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'username' => fake()->unique()->username(),
             'email' => fake()->unique()->safeEmail(),
+            'access_token' => Str::random(8),
             'status' => fake()->randomElement(['pending', 'approved', 'suspended', 'rejected']),
-            'reference_id' => fake()->unique()->word,
             'avatar' => fake()->imageUrl(600,400),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
