@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-    .primary-btn{
-        @apply bg-blue-600 text-white disabled:bg-blue-300 disabled:text-neutral-600 hover:bg-blue-700
-    }
-}
-
 :root {
     --my-color: #fff;
     /* or any other variables/style */
@@ -28,4 +22,10 @@ body {
 html {
     width: 100vw;
     overflow: hidden;
+}
+
+@layer components {
+    .table :nth-child(odd) td .custom-badge{
+        @apply bg-green-600
+    }
 }

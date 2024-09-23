@@ -4,7 +4,109 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f5512577-8268-41bd-bca6-b4418ee5c2f8" name="Changes" comment="" />
+    <list default="true" id="f5512577-8268-41bd-bca6-b4418ee5c2f8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/backend/app/Services/AccountInformation/DefaultService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/resources/views/mails/auth/otp-verification.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fontend/src/Components/ImageDragDrop.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fontend/src/Components/TwoStepAuthSwitch.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fontend/src/Pages/Auth/EmailVerification.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fontend/src/Pages/Profile.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fontend/src/utils/store/messageSlice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/AccountInformationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/AccountInformationController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/CategoryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/CategoryController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/DashboardController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/DashboardController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/DeleteMultipleDataController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/DeleteMultipleDataController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/UserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Auth/SessionController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Auth/SessionController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Requests/UserStoreRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Requests/UserStoreRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Requests/UserUpdateRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Requests/UserUpdateRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Resources/UserResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Resources/UserResource.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Models/AccountInformation.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/AccountInformation.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Models/Category.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Category.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Models/Notice.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Notice.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Policies/AccountInformationPolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Policies/AccountInformationPolicy.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Providers/AppServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/bootstrap/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/bootstrap/app.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/database/factories/AccountInformationFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/factories/AccountInformationFactory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/database/migrations/0001_01_01_000000_create_users_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/migrations/0001_01_01_000000_create_users_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/database/migrations/2024_09_18_091659_create_account_information_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/migrations/2024_09_18_091659_create_account_information_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/seeders/DatabaseSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/resources/views/welcome.blade.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routes/web.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/GuestAuthLayer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/AccountInfo.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/AccountInfo.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Action.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Action.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/BadgeLarge.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/BadgeLarge.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Breadcrumbs.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Breadcrumbs.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Button.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Button.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/ClipboardData.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/ClipboardData.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/DCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/DCard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/DefaultForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/DefaultForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/DefaultTooltip.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/DefaultTooltip.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/DomainInfo.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/DomainInfo.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/FileInput.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/FileInput.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/ForAdminUser.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/ForAdminUser.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/HeadlessSelectInput.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/HeadlessSelectInput.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/InnerSection.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/InnerSection.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/LoadImage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/LoadImage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Modal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Modal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Pagination.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Pagination.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Processing.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Processing.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Section.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Section.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/SelectInput.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/SelectInput.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/ShowDataIfFound.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/ShowDataIfFound.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Sidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Sidebar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/SidebarLink.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/SidebarLink.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Status.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Status.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/TabContent.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/TabContent.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/TabItem.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/TabItem.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Table.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Table.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/TableCheckbox.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/TableCheckbox.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/UserInfo.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/UserInfo.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Components/WebsiteUrlModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/WebsiteUrlModal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Layouts/App-Layout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Layouts/App-Layout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Layouts/Guest-Layout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Layouts/Guest-Layout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/AccountInformations/Index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/AccountInformations/Index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Auth/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Auth/Login.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Categories/Create.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Categories/Create.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Categories/Edit.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Categories/Edit.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Categories/Index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Categories/Index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Dashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Domains/Create.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Domains/Create.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Domains/Edit.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Domains/Edit.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Domains/Index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Domains/Index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Notices/Create.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Notices/Create.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Notices/Edit.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Notices/Edit.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Notices/Index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Notices/Index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/PendingDomains/Index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/PendingDomains/Index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/PendingUsers/Index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/PendingUsers/Index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Supports/Create.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Supports/Create.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Supports/Edit.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Supports/Edit.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Supports/Index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Supports/Index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Users/Create.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Users/Create.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Users/Edit.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Users/Edit.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Users/Index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Users/Index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/WebsiteUrls/Index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/WebsiteUrls/Index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/env/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/env/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/main.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/routes/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/routes/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/utils/api-endpoint.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/utils/api-endpoint.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/utils/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/utils/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/utils/request.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/utils/request.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/utils/store/authSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/utils/store/authSlice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/utils/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/utils/store/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/utils/store/themeSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/utils/store/themeSlice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/src/utils/toasts/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/utils/toasts/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fontend/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/tailwind.config.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,6 +123,9 @@
         <option value="JSX File" />
       </list>
     </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="C:\xampp\php\php.exe">
     <include_path>
@@ -157,19 +262,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/HR/Desktop/datalinks/fontend/src/Guards&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\PhpStorm 2024.2.0.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JavaScript Debug.OtpCodeController.php.executor": "Coverage",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "disable.download.node.interpreter.editor.notification": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/HR/Desktop/datalinks/fontend/src/Pages",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "terminal",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\PhpStorm 2024.2.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -181,29 +290,41 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\Guards" />
+      <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\Pages" />
       <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\utils\store" />
-      <recent name="C:\Users\HR\Desktop\datalinks\backend\app" />
+      <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\Pages\Auth" />
+      <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\Pages\Supports" />
+      <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\Pages\Notices" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\Pages\Auth" />
-      <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\Guards" />
+      <recent name="C:\Users\HR\Desktop\datalinks\backend\resources\views\mails\auth" />
       <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\utils\store" />
+      <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\Pages\AccountInformations" />
+      <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\Components" />
+      <recent name="C:\Users\HR\Desktop\datalinks\fontend\src\Pages\Auth" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="JavaScript Debug.OtpCodeController.php">
+    <configuration name="OtpCodeController.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/datalinks/Http/Controllers/Auth/OtpCodeController.php" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
     <configuration name="Main" type="PestRunConfigurationType">
       <option name="pestRunnerSettings">
         <PestRunner configuration_file="$PROJECT_DIR$/backend/phpunit.xml" scope="ConfigurationFile" use_alternative_configuration_file="true" />
       </option>
       <method v="2" />
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.OtpCodeController.php" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-410509235cf1-JavaScript-PS-242.20224.427" />
-        <option value="bundled-php-predefined-a98d8de5180a-d6acee4cb394-com.jetbrains.php.sharedIndexes-PS-242.20224.427" />
+        <option value="bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-PS-242.21829.154" />
+        <option value="bundled-php-predefined-a98d8de5180a-4d9f4c849d09-com.jetbrains.php.sharedIndexes-PS-242.21829.154" />
       </set>
     </attachedChunks>
   </component>
@@ -218,6 +339,12 @@
       <workItem from="1725533758214" duration="17005000" />
       <workItem from="1725731981776" duration="4326000" />
       <workItem from="1725792614619" duration="4977000" />
+      <workItem from="1726206564796" duration="314000" />
+      <workItem from="1726206926792" duration="2096000" />
+      <workItem from="1726209096366" duration="1731000" />
+      <workItem from="1726210883806" duration="1539000" />
+      <workItem from="1726471523125" duration="240171000" />
+      <workItem from="1726888557857" duration="117222000" />
     </task>
     <servers />
   </component>
@@ -226,5 +353,44 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/fontend/src/Pages/Supports/Edit.jsx</url>
+          <line>102</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/fontend/src/Pages/Profile.jsx</url>
+          <line>225</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/backend/app/Http/Controllers/Admin/UserController.php</url>
+          <line>162</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Admin\UserController" />
+            <option name="methodName" value="handleProfilePhoto" />
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php-line-method">
+          <url>file://$PROJECT_DIR$/backend/app/Http/Controllers/Admin/UserController.php</url>
+          <line>87</line>
+          <properties>
+            <option name="className" value="\App\Http\Controllers\Admin\UserController" />
+            <option name="methodName" value="update" />
+          </properties>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

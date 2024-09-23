@@ -13,7 +13,7 @@ class Notice extends Model
 
     protected $fillable = ['user_id', 'body'];
 
-    protected $appends = ['time'];
+    protected $appends = ['time', 'human_time'];
 
     public function user(): BelongsTo
     {
@@ -24,6 +24,13 @@ class Notice extends Model
     {
         return Attribute::make(
             get: fn() => $this->created_at->format('d/m/d H:i a')
+        );
+    }
+
+    public function humanTime(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->created_at->diffForHumans()
         );
     }
 }

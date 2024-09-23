@@ -27,7 +27,7 @@ class UserStoreRequest extends FormRequest
             'email' => 'required|email|max:200|min:3|unique:users,email',
             'password' => ['required', 'confirmed', Password::min(8)->max(100)->letters()],
             'password_confirmation' => ['required'],
-            'profile_photo' => 'required|image|mimes:jpeg,png,jpg|max:6000',
+            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,svg|max:6000',
             'role' => 'nullable|numeric|exists:roles,id',
         ];
     }

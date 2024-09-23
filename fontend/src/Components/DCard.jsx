@@ -1,7 +1,7 @@
 import { cn } from "../utils/index.js";
 
 const DCard = ({icon, arrowIcon, title, value, parcentValue, parcentClass = 'text-green-500'}) => {
-  return <div className="card bg-base-300 shadow-lg rounded-none">
+  return <div className="card bg-base-100 text-base-content shadow-lg rounded-none">
     <div className="card-body">
       {icon}
       <div className="flex justify-between items-end">

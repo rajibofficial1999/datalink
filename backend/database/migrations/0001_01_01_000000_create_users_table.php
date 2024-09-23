@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('access_token')->unique();
             $table->string('avatar')->nullable();
             $table->foreignId('team_id')->nullable();
+            $table->boolean('two_step_auth')->default(false);
             $table->enum('status', ['pending', 'approved', 'suspended', 'rejected'])->default('pending');
             $table->rememberToken();
             $table->timestamps();

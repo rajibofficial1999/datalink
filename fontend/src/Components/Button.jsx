@@ -1,14 +1,27 @@
 import { cn } from "../utils/index.js";
+import { Link } from "react-router-dom";
 
-const Button = ({children, proccessing = false, className = '', ...props}) => {
+const Button = ({as = 'button', proccessing = false, className = '', children, ...props}) => {
   return (
-    <button {...props} disabled={proccessing} className={cn('btn btn-square primary-btn ' + className)}>
+    <>
       {
-        proccessing ? <span className="loading loading-spinner"></span> : ''
+        as === 'button' &&
+        <button {...props} disabled={proccessing}
+                className={cn('bg-blue-600 flex justify-center items-center text-white hover:bg-blue-800 duration-200 rounded-md p-2 ' + className)}>
+          {
+            proccessing ? <span className="loading loading-spinner"></span> : children
+          }
+        </button>
       }
 
-      {proccessing ? '' : children}
-    </button>
+      {
+        as === 'link' &&
+        <Link {...props}
+                className={cn('bg-blue-600 flex justify-center items-center text-white hover:bg-blue-800 duration-200 rounded-md p-2 ' + className)}>
+          {children}
+        </Link>
+      }
+    </>
   )
 }
 export default Button

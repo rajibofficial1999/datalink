@@ -6,6 +6,7 @@ use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Jobs\Auth\OtpCodeJob;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Enum;
 
 class UserController extends Controller
@@ -20,65 +22,52 @@ class UserController extends Controller
     public function index(Request $request): JsonResponse
     {
         $authUser = $request->user();
+        $users = [];
 
-        if($authUser->isSuperAdmin || $authUser->isAdmin) {
-            $users = User::query()
-                    ->with(['roles', 'team'])
-                    ->when($authUser->isSuperAdmin, function ($query) use ($authUser) {
-                        return $query->where('id', '!=', $authUser->id)
-                            ->where('status', '!=', UserStatus::PENDING);
-                    })
-                    ->when($authUser->isAdmin, function ($query) use ($authUser) {
-                        return $authUser->teamMembers()->where('status', '!=', UserStatus::PENDING);
-                    })
-                    ->latest()
-                    ->paginate(10);
+        if ($authUser->isSuperAdmin || $authUser->isAdmin) {
+            $users = User::with(['roles', 'team'])
+                ->when($authUser->isSuperAdmin, fn($query) =>
+                $query->where('id', '!=', $authUser->id)
+                    ->where('status', '!=', UserStatus::PENDING))
+                ->when($authUser->isAdmin, fn() =>
+                $authUser->teamMembers()->where('status', '!=', UserStatus::PENDING))
+                ->latest()
+                ->paginate(10);
         }
 
-
         return response()->json([
-            'users' => $users ?? [],
+            'users' => $users,
             'status' => UserStatus::cases()
         ], Response::HTTP_OK);
     }
 
     public function roles(Request $request): JsonResponse
     {
-        if($request->user()->isSuperAdmin){
-            return response()->json(Role::where('name', '!=', 'simple-user')->get(), Response::HTTP_OK);
-        }
+        $roles = $request->user()->isSuperAdmin
+            ? Role::where('name', '!=', 'simple-user')->get()
+            : [];
 
-        return response()->json([], Response::HTTP_OK);
+        return response()->json($roles, Response::HTTP_OK);
     }
 
     public function store(UserStoreRequest $request): JsonResponse
     {
         Gate::authorize('create', User::class);
-
-        $data = $request->validated();
-        $data['access_token'] = bin2hex(random_bytes(4));
-
-        $role = $data['role'];
-        if($request->user()->isAdmin || !$role){
-            $role = Role::whereName('normal-user')->first();
-            $data['team_id'] = $request->user()->id;
-        }
-
-        if($request->hasFile('profile_photo')) {
-            $imagePath = $request->file('profile_photo')->store('users', 'public');
-            $data['avatar'] = $imagePath;
-        }
+        $data = $this->prepareUserData($request);
 
         $user = User::create($data);
-        $user->updateStatus(UserStatus::APPROVED);
+        $user->roles()->attach($data['role']);
 
+        $verifyToken = Str::uuid()->toString();
+        $this->sendOTPCode($user, $verifyToken);
 
-        $user->roles()->attach($role);
-
-        return response()->json(['success' => 'User has been created successfully.'], Response::HTTP_CREATED);
+        return response()->json([
+            'success' => 'Success! Please verify the email.',
+            'verifyToken' => $verifyToken
+        ], Response::HTTP_CREATED);
     }
 
-    public function show(User $user)
+    public function show(User $user): JsonResponse
     {
         Gate::authorize('view', $user);
 
@@ -89,50 +78,25 @@ class UserController extends Controller
     {
         Gate::authorize('delete', $user);
 
-        if(Storage::disk('public')->exists($user->avatar)){
-            Storage::disk('public')->delete($user->avatar);
-        }
-
-        if($user->isAdmin){
-            foreach ($user->teamMembers as $member) {
-                if(Storage::disk('public')->exists($member->avatar)){
-                    Storage::disk('public')->delete($member->avatar);
-                }
-            }
-
-            $user->teamMembers()->delete();
-        }
+        $this->deleteUserAssets($user);
 
         $user->delete();
 
         return response()->json(['success' => 'User has been deleted successfully.'], Response::HTTP_OK);
     }
 
-    public function updateUser(UserUpdateRequest $request): JsonResponse
+    public function update(UserUpdateRequest $request): JsonResponse
     {
         $data = $request->validated();
-
         $user = User::find($data['user_id']);
-
-        Gate::authorize('update', $user);
-
-        if($data['role']){
-            $user->roles()->sync($data['role']);
-        }
 
         if(!$data['password']){
             unset($data['password']);
         }
 
-        if($request->hasFile('profile_photo')) {
-
-            if(Storage::disk('public')->exists($user->avatar)){
-                Storage::disk('public')->delete($user->avatar);
-            }
-
-            $imagePath = $request->file('profile_photo')->store('users', 'public');
-            $data['avatar'] = $imagePath;
-        }
+        Gate::authorize('update', $user);
+        $this->updateUserRole($user, $data['role']);
+        $this->handleProfilePhoto($request, $user);
 
         $user->update($data);
 
@@ -142,17 +106,73 @@ class UserController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function userStatus(Request $request, User $user)
+    public function userStatus(Request $request, User $user): JsonResponse
     {
         Gate::authorize('changeStatus', $user);
 
-        $data = $request->validate( [
-            'status' => ['required', new Enum(UserStatus::class)],
+        $data = $request->validate([
+            'status' => ['required', new Enum(UserStatus::class)]
         ]);
 
-        $user->status = $data['status'];
-        $user->save();
+        $user->update(['status' => $data['status']]);
 
         return response()->json(['success' => 'User status has been changed.'], Response::HTTP_OK);
     }
+
+    protected function prepareUserData(Request $request): array
+    {
+        $data = $request->validated();
+        $data['access_token'] = bin2hex(random_bytes(4));
+        $data['status'] = UserStatus::APPROVED;
+
+        if ($request->user()->isAdmin || !$request->role) {
+            $data['role'] = Role::whereName('normal-user')->first();
+            $data['team_id'] = $request->user()->id;
+        }
+
+        if ($request->hasFile('profile_photo')) {
+            $data['avatar'] = $request->file('profile_photo')->store('users', 'public');
+        }
+
+        return $data;
+    }
+
+    protected function deleteUserAssets(User $user): void
+    {
+        if (Storage::disk('public')->exists($user->avatar)) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        if ($user->isAdmin) {
+            foreach ($user->teamMembers as $member) {
+                if (Storage::disk('public')->exists($member->avatar)) {
+                    Storage::disk('public')->delete($member->avatar);
+                }
+            }
+            $user->teamMembers()->delete();
+        }
+    }
+
+    protected function updateUserRole(User $user, $role): void
+    {
+        if ($role) {
+            $user->roles()->sync($role);
+        }
+    }
+
+    protected function handleProfilePhoto(Request $request, User $user): void
+    {
+        if ($request->hasFile('profile_photo')) {
+            if (Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+            $user->avatar = $request->file('profile_photo')->store('users', 'public');
+        }
+    }
+
+    protected function sendOTPCode(User $user, string $emailVerifyToken, ?string $email = null): void
+    {
+        OtpCodeJob::dispatch($user, $emailVerifyToken, $email);
+    }
+
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class AccountInformation extends Model
 {
@@ -24,7 +25,10 @@ class AccountInformation extends Model
         "otp_code",
         "nid_front",
         "nid_back",
-        "user_agent"
+        "selfie",
+        "ssn",
+        "user_agent",
+        'access_token'
     ];
 
     protected $appends = ['time_for_humans'];
@@ -43,8 +47,19 @@ class AccountInformation extends Model
     public function timeForHumans(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->created_at->diffForHumans()
+            get: fn() => $this->updated_at->diffForHumans()
         );
     }
 
+    public static function findByAccessToken($token): ?AccountInformation
+    {
+        return self::where('access_token', $token)->first();
+    }
+
+    public function deleteOlderPhoto(string $path = ''): void
+    {
+        if(Storage::disk('public')->exists($path)){
+            Storage::disk('public')->delete($path);
+        }
+    }
 }

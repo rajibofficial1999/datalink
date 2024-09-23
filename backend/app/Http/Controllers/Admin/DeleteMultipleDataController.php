@@ -7,6 +7,7 @@ use App\Models\AccountInformation;
 use App\Models\Category;
 use App\Models\Domain;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Schema;
@@ -15,8 +16,8 @@ use Illuminate\Validation\ValidationException;
 
 class DeleteMultipleDataController extends Controller
 {
-    public function __invoke(Request $request, $table) {
-
+    public function __invoke(Request $request, $table): JsonResponse
+    {
         // Check if table exists
         if (!Schema::hasTable($table)) {
             throw ValidationException::withMessages([
@@ -40,10 +41,10 @@ class DeleteMultipleDataController extends Controller
             ]);
         }
 
-        //  Delete all child Data like image. file,
-        $this->deleteModelData($model, $table,  $data['data_ids']);
+        // Delete associated files or related data
+        $this->deleteRelatedData($model, $table, $data['data_ids']);
 
-        //  Delete all selected records,
+        // Delete all selected records
         $model::whereIn('id', $data['data_ids'])->delete();
 
         // Return a response indicating success
@@ -54,50 +55,55 @@ class DeleteMultipleDataController extends Controller
 
     protected function getModelByTableName(string $tableName): ?string
     {
-        $mapping = [
+        return [
             'users' => User::class,
             'categories' => Category::class,
             'domains' => Domain::class,
             'account_information' => AccountInformation::class,
-        ];
-
-        return $mapping[$tableName] ?? null;
+        ][$tableName] ?? null;
     }
 
-    protected function deleteModelData(string $model, string $table, array $ids): void
+    protected function deleteRelatedData(string $model, string $table, array $ids): void
     {
-        if($table == 'domains'){
-            $domains = $model::whereIn('id', $ids)->get();
-            foreach ($domains as $domain) {
-                if(Storage::disk('public')->exists($domain->screenshot)){
-                    Storage::disk('public')->delete($domain->screenshot);
-                }
+        $items = $model::whereIn('id', $ids)->get();
+
+        foreach ($items as $item) {
+            $this->deleteItemFiles($table, $item);
+        }
+    }
+
+    protected function deleteItemFiles(string $table, $item): void
+    {
+        $filesToDelete = [];
+
+        switch ($table) {
+            case 'domains':
+                $filesToDelete[] = $item->screenshot ?? '';
+                break;
+
+            case 'users':
+                $filesToDelete[] = $item->avatar ?? '';
+                break;
+
+            case 'account_information':
+                $filesToDelete = [
+                    $item->nid_front ?? '',
+                    $item->nid_back ?? '',
+                    $item->selfie ?? ''
+                ];
+                break;
+        }
+
+        foreach ($filesToDelete as $file) {
+            if (Storage::disk('public')->exists($file)) {
+                Storage::disk('public')->delete($file);
             }
         }
 
-        if($table == 'users'){
-            $users = $model::whereIn('id', $ids)->get();
-            foreach ($users as $user) {
-                if(Storage::disk('public')->exists($user->avatar)){
-                    Storage::disk('public')->delete($user->avatar);
-                }
-            }
-        }
-
-        if($table == 'account_information'){
-            $accounts = $model::whereIn('id', $ids)->get();
-            foreach ($accounts as $account) {
-                if(Storage::disk('public')->exists($account->nid_front)){
-                    Storage::disk('public')->delete($account->nid_front);
-                }
-
-                if(Storage::disk('public')->exists($account->nid_back)){
-                    Storage::disk('public')->delete($account->nid_back);
-                }
-
-                if(Storage::disk('public')->exists($account->selfie)){
-                    Storage::disk('public')->delete($account->selfie);
-                }
+        // For account_information, delete older photos via method if available
+        if ($table === 'account_information') {
+            foreach (['nid_front', 'nid_back', 'selfie'] as $photoField) {
+                $item->deleteOlderPhoto($item->{$photoField} ?? '');
             }
         }
     }

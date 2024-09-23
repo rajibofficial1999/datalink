@@ -1,10 +1,10 @@
-import { themeChange } from 'theme-change'
 import { useEffect } from "react";
 import Sidebar from "../Components/Sidebar.jsx";
 import Navbar from "../Components/Navbar.jsx";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { routes } from "../routes/index.js";
+import Toast from "../Components/Toast.jsx";
 
 function AppLayout() {
   const user = useSelector((state) => state.auth?.user)
@@ -14,7 +14,6 @@ function AppLayout() {
     if(!user){
       navigate(routes.login)
     }
-    themeChange(false)
   },[user, navigate])
 
   if (!user) {
@@ -23,7 +22,8 @@ function AppLayout() {
 
   return (
     <>
-      <div className='h-screen overflow-x-hidden bg-base-300/2'>
+      <Toast/>
+      <div className='h-screen overflow-x-hidden bg-base-300'>
         <Navbar/>
         <Sidebar/>
         <div className='ml-0 lg:ml-72 mt-20 px-6 pt-1'>

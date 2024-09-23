@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
 
 class AccountInformationController extends Controller
 {
@@ -27,32 +26,25 @@ class AccountInformationController extends Controller
                         ->when($authUser->isUser, function ($query) use ($authUser) {
                             return $query->where('user_id', $authUser->id);
                         })
-                        ->latest()
+                        ->orderBy('updated_at', 'desc')
                         ->paginate(10);
 
         return response()->json($accounts, Response::HTTP_OK);
     }
 
-    public function destroy(AccountInformation $accountInformation): JsonResponse
+    public function destroy(AccountInformation $account): JsonResponse
     {
+        Gate::authorize('delete', $account);
 
-        Gate::authorize('delete', $accountInformation);
+        $photos = ['nid_front', 'nid_back', 'selfie'];
 
-        if(Storage::disk('public')->exists($accountInformation->nid_front ?? '')){
-            Storage::disk('public')->delete($accountInformation->nid_front ?? '');
+        foreach ($photos as $photo) {
+            $account->deleteOlderPhoto($account->{$photo} ?? '');
         }
 
-        if(Storage::disk('public')->exists($accountInformation->nid_back ?? '')){
-            Storage::disk('public')->delete($accountInformation->nid_back ?? '');
-        }
-
-        if(Storage::disk('public')->exists($accountInformation->selfie ?? '')){
-            Storage::disk('public')->delete($accountInformation->selfie ?? '');
-        }
-
-        $accountInformation->delete();
+        $account->delete();
 
         return response()->json(['success' => 'Record deleted successfully.'], Response::HTTP_OK);
-
     }
+
 }

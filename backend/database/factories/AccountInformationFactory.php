@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AccountInformation>
@@ -27,6 +28,7 @@ class AccountInformationFactory extends Factory
             "nid_front" => fake()->imageUrl(),
             "nid_back" => fake()->imageUrl(),
             "user_agent" => fake()->userAgent(),
+            'access_token' => Str::random(15),
         ];
     }
 }

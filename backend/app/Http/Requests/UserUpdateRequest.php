@@ -36,7 +36,7 @@ class UserUpdateRequest extends FormRequest
             ],
             'password' => ['nullable', 'confirmed', Password::min(8)->max(100)->letters()],
             'password_confirmation' => ['nullable'],
-            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:6000',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:6000',
             'role' => 'nullable|numeric|exists:roles,id',
             'user_id' => 'required|numeric|exists:users,id',
         ];

@@ -1,10 +1,10 @@
-const ForSuperAdmin = ({user, children}) => {
+const ForAdminUser = ({user, children}) => {
   return (
     <>
       {
-        user?.is_super_admin && children
+        user?.is_admin && children
       }
     </>
   )
 }
-export default ForSuperAdmin
+export default ForAdminUser

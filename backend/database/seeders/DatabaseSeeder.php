@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
             'email' => 'superadmin@admin.com',
+            'two_step_auth' => true,
             "status" => 'approved',
             'access_token' => Str::random(8),
         ]);

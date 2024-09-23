@@ -1,5 +1,7 @@
-const Section = ({children}) => {
-  return <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+import { cn } from "../utils/index.js";
+
+const Section = ({className, children}) => {
+  return <section className={cn('mb-20', className)}>
     {children}
   </section>
 }

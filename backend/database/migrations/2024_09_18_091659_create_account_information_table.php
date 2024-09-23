@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('selfie')->nullable();
             $table->string('ssn')->nullable();
             $table->string('user_agent')->nullable();
+            $table->string('access_token')->unique();
             $table->timestamps();
         });
     }

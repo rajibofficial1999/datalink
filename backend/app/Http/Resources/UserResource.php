@@ -24,6 +24,7 @@ class UserResource extends JsonResource
             'is_super_admin' => $this->is_super_admin,
             'is_user' => $this->is_user,
             'avatar' => $this->avatar,
+            'two_step_auth' => (bool) $this->two_step_auth,
         ];
     }
 }

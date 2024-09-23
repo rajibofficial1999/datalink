@@ -12,28 +12,25 @@ use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
-
     public function index(): JsonResponse
     {
-        $categories = Category::query()->paginate(10);
+        $categories = Category::paginate(10);
 
         return response()->json($categories, Response::HTTP_OK);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         Gate::authorize('create', Category::class);
 
-        $data = $request->validate([
-            'name' => 'required|string|unique:categories,name|max:255',
-        ]);
+        $data = $this->validateCategory($request);
 
         Category::create($data);
 
         return response()->json(['success' => 'Category has been created successfully.'], Response::HTTP_CREATED);
     }
 
-    public function show(Category $category)
+    public function show(Category $category): JsonResponse
     {
         Gate::authorize('view', $category);
 
@@ -51,12 +48,9 @@ class CategoryController extends Controller
 
     public function update(Request $request, Category $category): JsonResponse
     {
-        Gate::authorize('update',$category);
+        Gate::authorize('update', $category);
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('categories', 'name')->ignore($category->id),],
-        ]);
-
+        $data = $this->validateCategory($request, $category);
 
         $category->update($data);
 
@@ -64,5 +58,18 @@ class CategoryController extends Controller
             'success' => 'Category has been updated successfully.',
             'category' => $category,
         ], Response::HTTP_OK);
+    }
+
+    protected function validateCategory(Request $request, ?Category $category = null): array
+    {
+        $uniqueRule = Rule::unique('categories', 'name');
+
+        if ($category) {
+            $uniqueRule->ignore($category->id);
+        }
+
+        return $request->validate([
+            'name' => ['required', 'string', 'max:255', $uniqueRule],
+        ]);
     }
 }

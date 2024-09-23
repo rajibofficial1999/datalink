@@ -1,159 +1,127 @@
 import Section from "../../Components/Section.jsx";
 import Breadcrumbs from "../../Components/Breadcrumbs.jsx";
-import From from "../../Components/From.jsx";
+import DefaultForm from "../../Components/DefaultForm.jsx";
 import Input from "../../Components/Input.jsx";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import Button from "../../Components/Button.jsx";
 import request from "../../utils/request.js";
-import { USER_ROLES, USERS } from "../../utils/api-endpoint.js";
-import { useSelector } from "react-redux";
-import ForSuperAdmin from "../../Components/ForSuperAdmin.jsx";
+import { DocumentDuplicateIcon } from "@heroicons/react/24/solid/index.js";
+import DefaultTooltip from "../../Components/DefaultTooltip.jsx";
+import { DOMAINS } from "../../utils/api-endpoint.js";
+import { successToast } from "../../utils/toasts/index.js";
+import ClipboardData from "../../Components/ClipboardData.jsx";
+import FileInput from "../../Components/FileInput.jsx";
 
 const Create = () => {
-  const user = useSelector((state) => state.auth?.user)
-  const [errors, setErrors] = useState([])
-  const [roles, setRoles] = useState([])
-  const [isProcessing, setIsProcessing] = useState(false)
-
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [avatar, setAvatar] = useState('')
-  const [role, setRole] = useState('')
+  const [errors, setErrors] = useState({});
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [domain, setDomain] = useState('');
+  const [skypeUrl, setSkypeUrl] = useState('');
+  const [screenshot, setScreenshot] = useState(null);
+  const [binanceId] = useState(215454454514);
+  const fileInputRef = useRef(null);
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
-    setIsProcessing(true)
-
-    // Create a FormData object
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('password', password);
-    formData.append('password_confirmation', confirmPassword);
-
-    if (avatar) {
-      formData.append('profile_photo', avatar);
-    }
-
-    formData.append('role', role);
+    event.preventDefault();
+    setIsProcessing(true);
+    const formData = createFormData();
 
     try {
-      const { data } = await request.post(USERS, formData);
-
-      setEmail('')
-      setName('')
-      setAvatar('')
-      setRole('')
-
+      const { data } = await request.post(DOMAINS, formData);
+      handleSuccess(data);
     } catch (error) {
-      if (error.response) {
-        setErrors(error.response.data.errors);
-      } else {
-        console.log('An error occurred');
-      }
-    }finally {
-      setIsProcessing(false)
-      setPassword('')
-      setConfirmPassword('')
+      handleError(error);
+    } finally {
+      resetForm();
+      setIsProcessing(false);
     }
-  }
+  };
 
-
-  useEffect(() => {
-    const getUserRoles = async () => {
-      try {
-        const {data} = await request.get(USER_ROLES)
-        setRoles(data)
-      }catch (error){
-        console.log(error)
-      }
+  const createFormData = () => {
+    const formData = new FormData();
+    formData.append('domain', domain);
+    formData.append('skype_url', skypeUrl);
+    if (screenshot) {
+      formData.append('screenshot', screenshot);
     }
+    return formData;
+  };
 
-    getUserRoles()
-  }, []);
+  const handleSuccess = (data) => {
+    successToast(data.success);
+    setErrors({});
+  };
 
+  const handleError = (error) => {
+    if (error.response) {
+      setErrors(error.response.data.errors);
+    } else {
+      console.error('An error occurred:', error);
+    }
+  };
+
+  const resetForm = () => {
+    setDomain('');
+    setSkypeUrl('');
+    setScreenshot(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   return (
-    <>
-      <Section>
-        <Breadcrumbs>Create New User</Breadcrumbs>
-        <div className='bg-base-100 text-base-content w-full md:max-w-3xl mx-auto mt-5 p-10'>
-          <From onSubmit={handleSubmit}>
-            <Input
-              type='text'
-              placeholder='Name'
-              label='Name'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              error={errors?.name ?? errors.error}
+    <Section>
+      <Breadcrumbs>Create Domain</Breadcrumbs>
+      <div className='bg-base-100 text-base-content w-full md:max-w-3xl mx-auto mt-5 p-10'>
+        <DefaultForm onSubmit={handleSubmit}>
+          <Input
+            type='text'
+            placeholder='www.example.com'
+            label='Valid Domain'
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
+            error={errors?.domain}
+          />
+
+          <Input
+            type='text'
+            placeholder='live:.cid.96776b7575454d5a'
+            label='Skype ID'
+            value={skypeUrl}
+            onChange={(e) => setSkypeUrl(e.target.value)}
+            error={errors?.skype_url}
+          />
+
+          <div className='mt-2'>
+            <label htmlFor='screenshot' className="text-sm">Binance ID ({binanceId})</label>
+            <DefaultTooltip value='Copy Binance ID' className='w-full'>
+              <ClipboardData value={binanceId}>
+                <button type='button'
+                        className='mt-2 input input-bordered input-primary w-full flex justify-center items-center group'>
+                  <DocumentDuplicateIcon className='size-8 text-blue-600 group-hover:scale-75 duration-200'/>
+                </button>
+              </ClipboardData>
+            </DefaultTooltip>
+          </div>
+
+          <div className='mt-2'>
+            <label htmlFor='screenshot' className="text-sm">Payment Screenshot</label>
+            <FileInput
+              id='screenshot'
+              onChange={(e) => setScreenshot(e.target.files[0])}
+              fileInputRef={fileInputRef}
+              error={errors?.screenshot}
             />
+            {errors?.screenshot && <p className='text-red-500 mt-1 mb-3'>{errors?.screenshot}</p>}
+          </div>
 
-            <Input
-              type='email'
-              placeholder='Email'
-              label='Email Address'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              error={errors?.email ?? errors.error}
-            />
-            <Input
-              type='password'
-              placeholder='Password'
-              label='Password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={errors?.password ?? errors.error}
-            />
+          <div className='flex justify-end mt-4'>
+            <Button type='submit' proccessing={isProcessing} className='w-24'>Submit</Button>
+          </div>
+        </DefaultForm>
+      </div>
+    </Section>
+  );
+};
 
-            <Input
-              type='password'
-              placeholder='Confirm Password'
-              label='Confirm Password'
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              error={errors?.password_confirmation ?? errors.error}
-            />
-
-            <div className='mt-2'>
-              <label htmlFor='avatar' className="text-sm">Profile Photo</label>
-              <input
-                id='avatar'
-                type="file"
-                className="file-input file-input-bordered w-full input-primary mt-2"
-                onChange={(e) => setAvatar(e.target.files[0])}
-              />
-              {errors?.profile_photo && <p className='text-red-500 mt-1 mb-3'>{errors?.profile_photo}</p>}
-            </div>
-
-            <ForSuperAdmin user={user}>
-              <div className='flex flex-col'>
-                <label htmlFor='role' className="text-sm mt-4">User Role</label>
-                <select
-                  className="select select-primary w-full mt-2"
-                  id='role'
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                >
-                  <option>Select Role</option>
-
-                  {
-                    roles?.map(item => <option key={item.id} value={item.id}>{item.name}</option>)
-                  }
-                </select>
-                {errors?.role && <p className='text-red-500 mt-1 mb-3'>{errors?.role}</p>}
-              </div>
-            </ForSuperAdmin>
-
-            <div className='flex justify-end mt-4'>
-              <Button type='submit' proccessing={isProcessing} className='w-24'>Submit</Button>
-            </div>
-
-          </From>
-        </div>
-      </Section>
-    </>
-  )
-}
-export default Create
+export default Create;

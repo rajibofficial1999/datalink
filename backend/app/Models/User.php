@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserStatus;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\{BelongsTo, BelongsToMany, HasMany, HasOne};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -17,55 +15,31 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
 
-    protected $appends = ['is_admin','is_super_admin', 'is_user'];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'name',
-        'email',
-        'access_token',
-        'team_id',
-        'password',
-        'avatar',
+        'name', 'email', 'access_token', 'team_id', 'password',
+        'two_step_auth', 'avatar', 'email_verified_at', 'status'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
+
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+
+    protected $appends = ['is_admin', 'is_super_admin', 'is_user', 'verified_date'];
+
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'status' => UserStatus::class
+            'status' => UserStatus::class,
         ];
     }
 
-    public function domains(): HasMany
-    {
-        return $this->hasMany(Domain::class);
-    }
-
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class);
-    }
+    /* Relationships */
 
     public function team(): BelongsTo
     {
@@ -77,55 +51,19 @@ class User extends Authenticatable
         return $this->hasMany(User::class, 'team_id');
     }
 
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function domains(): HasMany
+    {
+        return $this->hasMany(Domain::class);
+    }
+
     public function websiteUrls(): HasMany
     {
         return $this->hasMany(WebsiteUrl::class);
-    }
-
-    public function isAdmin(): Attribute
-    {
-        return Attribute::make(
-            get: function() {
-                if($this->roles->first()){
-                    return $this->roles->first()->name == 'admin-user';
-                }else{
-                    return false;
-                }
-            }
-        );
-    }
-
-    public function isSuperAdmin(): Attribute
-    {
-        return Attribute::make(
-            get: function() {
-                if($this->roles->first()){
-                    return $this->roles->first()->name == 'super-admin';
-                }else{
-                    return false;
-                }
-            }
-        );
-    }
-
-    public function isUser(): Attribute
-    {
-        return Attribute::make(
-            get: function() {
-                if($this->roles->first()){
-                    return $this->roles->first()->name == 'normal-user';
-                }else{
-                    return false;
-                }
-            }
-        );
-    }
-
-    public function updateStatus($value): void
-    {
-        $this->status = $value;
-
-        $this->save();
     }
 
     public function supports(): HasMany
@@ -138,4 +76,53 @@ class User extends Authenticatable
         return $this->hasMany(Notice::class);
     }
 
+    public function otpCode(): HasOne
+    {
+        return $this->hasOne(OtpCode::class);
+    }
+
+    /* Custom Attributes */
+
+    public function isAdmin(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->roles->first()?->name === 'admin-user' ?? false
+        );
+    }
+
+    public function isSuperAdmin(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->roles->first()?->name === 'super-admin' ?? false
+        );
+    }
+
+    public function isUser(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->roles->first()?->name === 'normal-user' ?? false
+        );
+    }
+
+    public function verifiedDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => Carbon::parse($this->email_verified_at)->format('d-M-y')
+        );
+    }
+
+    public function isVerified(): bool
+    {
+        return (bool) $this->email_verified_at;
+    }
+
+    public function isTowStepAuthOn(): bool
+    {
+        return $this->two_step_auth;
+    }
+
+    public static function findUserByAccessToken($token): ?User
+    {
+        return self::where('access_token', $token)->first();
+    }
 }

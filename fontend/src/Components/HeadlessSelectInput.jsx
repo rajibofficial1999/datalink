@@ -1,25 +1,22 @@
 import { Select } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import clsx from 'clsx'
+import { cn } from "../utils/index.js";
 
-export default function HeadlessSelect() {
+export default function HeadlessSelectInput({options, className = '', ...props}) {
   return (
-    <div className="w-full max-w-md px-4">
+    <div className={cn("w-full ", className)}>
         <div className="relative">
           <Select
-            className={clsx(
-              'mt-3 block w-full appearance-none rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white',
-              'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
-              '*:text-black'
-            )}
+            {...props}
+            className='block w-full appearance-none border border-primary py-3 rounded-md px-3 text-sm/6 text-base-content focus:outline-none'
           >
-            <option value="active">Active</option>
-            <option value="paused">Paused</option>
-            <option value="delayed">Delayed</option>
-            <option value="canceled">Canceled</option>
+            <option>Select Service</option>
+            {
+              options?.map((option) => <option key={option.id} value={option.id}>{option.name}</option>)
+            }
           </Select>
           <ChevronDownIcon
-            className="group pointer-events-none absolute top-2.5 right-2.5 size-4 fill-white/60"
+            className="group pointer-events-none absolute top-2.5 right-2.5 size-4"
             aria-hidden="true"
           />
         </div>

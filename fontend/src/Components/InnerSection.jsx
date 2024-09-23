@@ -1,18 +1,16 @@
-import Button from "./Button.jsx";
+import { cn } from "../utils/index.js";
 
-const TableSection = ({heading, refreshButton = false, pageRefresh, children}) => {
+const InnerSection = ({heading = '', headingButton = '', className = '', children}) => {
   return (
     <>
-      <div className="overflow-x-auto mt-5 bg-base-100 text-base-content p-6">
-        <div className='flex justify-between items-center mb-5'>
+      <div className={cn("overflow-x-auto mt-5 bg-base-100 text-base-content p-6", className)}>
+        <div className={cn('flex justify-between items-center mb-5', (heading === '' && headingButton === '') && 'mb-0')}>
           <h1 className='text-xl text-nowrap'>{heading}</h1>
-          {
-            refreshButton ? <Button className='px-16' onClick={pageRefresh}>Refresh</Button>: ''
-          }
+          {headingButton ?? ''}
         </div>
         {children}
       </div>
     </>
   )
 }
-export default TableSection
+export default InnerSection

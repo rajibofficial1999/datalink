@@ -16,4 +16,9 @@ class Category extends Model
     {
         return $this->hasMany(WebsiteUrl::class);
     }
+
+    public function visitorInformation(): HasMany
+    {
+        return $this->hasMany(VisitorInformation::class);
+    }
 }

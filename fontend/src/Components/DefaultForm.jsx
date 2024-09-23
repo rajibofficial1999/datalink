@@ -1,8 +1,8 @@
-const From = ({ children, ...props }) => {
+const DefaultForm = ({ children, ...props }) => {
   return (
     <form {...props}>
       {children}
     </form>
   )
 }
-export default From
+export default DefaultForm

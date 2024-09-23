@@ -1,98 +1,102 @@
 import Table from "../../Components/Table.jsx";
 import { useEffect, useState } from "react";
 import request from "../../utils/request.js";
-import { DOMAINS } from "../../utils/api-endpoint.js";
+import { CATEGORIES } from "../../utils/api-endpoint.js";
 import Section from "../../Components/Section.jsx";
 import Processing from "../../Components/Processing.jsx";
 import ShowDataIfFound from "../../Components/ShowDataIfFound.jsx";
-import Status from "../../Components/Status.jsx";
-import Breadcrumbs from "../../Components/Breadcrumbs.jsx";
-import { APP_URL } from "../../env/index.js";
 import Action from "../../Components/Action.jsx";
 import { routes } from "../../routes/index.js";
 import { successToast } from "../../utils/toasts/index.js";
+import Pagination from "../../Components/Pagination.jsx";
+import InnerSection from "../../Components/InnerSection.jsx";
+import TableCheckbox from "../../Components/TableCheckbox.jsx";
+import { handleMultipleDelete } from "../../utils/index.js";
 
 const Index = () => {
-const [domains, setDomains] = useState([]);
-const [isProcessing, setIsProcessing] = useState(false)
+  const [categories, setCategories] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-const tableColumns = [
-  'Domain',
-  'Screenshot',
-  'Amount',
-  'Status',
-  'Action'
-]
+  const tableColumns = ['Name', 'Action'];
 
-  const fetchDomains = async () => {
+  const fetchCategories = async (page) => {
+    setIsProcessing(true);
+    try {
+      const { data } = await request.get(`${CATEGORIES}?page=${page}`);
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleDelete = async (categoryId) => {
+    setIsProcessing(true);
+    try {
+      const { data } = await request.delete(`${CATEGORIES}/${categoryId}`);
+      successToast(data.success);
+      await pageRefresh();
+    } catch (error) {
+      console.error('Error deleting category:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const pageRefresh = async () => {
+    await fetchCategories(currentPage);
+  };
+
+  const handlePagination = async (page) => {
+    setCurrentPage(page);
+    await fetchCategories(page);
+  };
+
+  const handleCheckedItems = async () => {
     setIsProcessing(true)
-    try {
-      const { data } = await request.get(DOMAINS)
-      setDomains(data)
-    }catch (error){
-      console.log(error)
-    }finally {
-      setIsProcessing(false)
-    }
-  }
-
-
-  const handleDelete = async (domainId) => {
-    try {
-      const {data} = await request.delete(`${DOMAINS}/${domainId}`)
-      successToast(data.success)
-      fetchDomains()
-    }catch (error){
-      console.log(error)
-    }
+    await handleMultipleDelete('categories')
+    await fetchCategories(currentPage)
+    setIsProcessing(false)
   }
 
   useEffect(() => {
-    fetchDomains()
+    pageRefresh();
   }, []);
-
 
   return (
     <Section>
-      <Breadcrumbs>Domains</Breadcrumbs>
-
-      <div className="overflow-x-auto bg-base-100 text-base-content p-6">
+      <InnerSection heading='Services'>
         <Processing processing={isProcessing}>
-          <ShowDataIfFound data={domains?.data}>
-            <Table tableColumns={tableColumns}>
-              {domains?.data?.map(domain => (
-                <tr key={domain.id}>
+          <ShowDataIfFound data={categories?.data}>
+            <Table tableColumns={tableColumns} handleCheckedItems={handleCheckedItems}>
+              {categories?.data?.map(category => (
+                <tr key={category.id}>
                   <th>
-                    <label>
-                      <input type="checkbox" className="checkbox"/>
-                    </label>
+                    <TableCheckbox value={category.id} />
                   </th>
                   <td>
                     <div className="flex items-center gap-3">
-                      <div>
-                        <div className="font-bold">{domain.name}</div>
-                      </div>
+                      <div className="font-bold">{category.name}</div>
                     </div>
                   </td>
                   <td>
-                    <img className='size-14 rounded-md' src={`${APP_URL}/storage/${domain.screenshot}`} alt="screenshot"/>
-                  </td>
-                  <td>
-                    $<span>{domain.amount}</span>
-                  </td>
-                  <td>
-                    <Status data={domain}/>
-                  </td>
-                  <td>
-                    <Action data={domain} url={routes.domains} handleDelete={handleDelete}/>
+                    <Action data={category} url={routes.categories} handleDelete={handleDelete} />
                   </td>
                 </tr>
               ))}
             </Table>
+            <Pagination
+              data={categories}
+              handlePagination={handlePagination}
+              currentPage={currentPage}
+            />
           </ShowDataIfFound>
         </Processing>
-      </div>
+      </InnerSection>
     </Section>
-  )
-}
-export default Index
+  );
+};
+
+export default Index;

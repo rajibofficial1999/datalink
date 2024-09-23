@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\AccountInformation;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class AccountInformationPolicy
 {
@@ -13,24 +12,17 @@ class AccountInformationPolicy
      */
     public function delete(User $user, AccountInformation $accountInformation): bool
     {
-        if($user->isSuperAdmin){
+        if ($user->isSuperAdmin) {
             return true;
         }
 
-        if($user->isAdmin){
-            if($accountInformation->owner()->is($user)){
-                return true;
-            }
+        if ($user->isAdmin) {
+            $owner = $accountInformation->owner;
 
-            if($accountInformation->owner->team_id == $user->id){
-                return true;
-            }
-
-            return false;
+            return $owner->is($user) || $owner->team_id == $user->id;
         }
 
         return false;
-
     }
 
 }

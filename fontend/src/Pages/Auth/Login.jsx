@@ -1,6 +1,5 @@
-import From from "../../Components/From.jsx";
 import Input from "../../Components/Input.jsx";
-import { KeyIcon, UserIcon } from "@heroicons/react/24/solid/index.js";
+import { EnvelopeIcon, KeyIcon } from "@heroicons/react/24/solid/index.js";
 import Button from "../../Components/Button.jsx";
 import { ADMIN_LOGIN } from "../../utils/api-endpoint.js";
 import { useState } from "react";
@@ -11,11 +10,14 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../../routes/index.js";
 import CheckBox from "../../Components/CheckBox.jsx";
 import { useCookies } from 'react-cookie';
+import DefaultForm from "../../Components/DefaultForm.jsx";
+import GuestAuthLayer from "../../Components/GuestAuthLayer.jsx";
+import { addMessage } from "../../utils/store/messageSlice.js";
 
 const Login = () => {
-  const [cookies, setCookie] = useCookies(['username', 'password']);
+  const [cookies, setCookie] = useCookies(['email', 'password']);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [username, setUsername] = useState(cookies.username ?? '');
+  const [email, setEmail] = useState(cookies.email ?? '');
   const [password, setPassword] = useState(cookies.password ?? '');
   const [errors, setErrors] = useState([]);
   const dispatch = useDispatch()
@@ -26,16 +28,21 @@ const Login = () => {
     e.preventDefault()
     setIsProcessing(true);
     try {
-      const { data } = await request.post(ADMIN_LOGIN, { username, password });
-      if(data.token){
-        data.user.token = data.token
-        dispatch(setAuthUser(data.user))
-        navigate(routes.dashboard)
-        if (rememberMe){
-          setCookie('username', username);
-          setCookie('password', password);
-        }
+      const { data } = await request.post(ADMIN_LOGIN, { email, password });
+
+      if(data.success){
+        dispatch(setAuthUser({token: data.token, user: data.user}))
+        navigate(routes.home)
+      }else{
+        dispatch(addMessage(data.message))
+        navigate(`${routes.emailVerification}/${data?.token}`)
       }
+
+      if (rememberMe){
+        setCookie('email', email);
+        setCookie('password', password);
+      }
+
     } catch (error) {
       if(error.response?.data){
         setErrors(error.response.data.errors);
@@ -48,20 +55,16 @@ const Login = () => {
 
   return (
     <>
-      <div className='max-w-full sm:max-w-lg mx-auto w-full'>
-        <div className='my-16 text-center'>
-          <h1 className='sm:text-4xl text-2xl font-bold mb-5'>Welcome To CyberBD</h1>
-          <p className='font-semibold text-lg'>Login System For Premium Account</p>
-        </div>
-        <From onSubmit={submit}>
+      <GuestAuthLayer heading='Welcome To CyberBD' subHeading='Login System For Premium Account'>
+        <DefaultForm onSubmit={submit}>
           <Input
             className='mb-5'
-            type='text'
-            placeholder='username'
-            icon={<UserIcon className='w-5 h-5'/>}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            error={errors.username ?? errors.error}
+            type='email'
+            placeholder='Email'
+            icon={<EnvelopeIcon className='w-5 h-5'/>}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            error={errors?.email ?? errors?.error}
           />
           <Input
             className='mb-5'
@@ -70,15 +73,15 @@ const Login = () => {
             icon={<KeyIcon className='w-5 h-5'/>}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            error={errors.password ?? errors.error}
+            error={errors?.password ?? errors?.error}
           />
 
           <CheckBox onChange={() => setRememberMe(!rememberMe)} className='mb-3'>Remember Me</CheckBox>
 
           <Button className='w-full' proccessing={isProcessing}>Login</Button>
 
-        </From>
-      </div>
+        </DefaultForm>
+      </GuestAuthLayer>
     </>
   )
 }
