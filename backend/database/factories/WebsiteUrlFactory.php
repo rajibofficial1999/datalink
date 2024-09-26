@@ -2,8 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Category;
-use App\Models\User;
+use App\Models\Domain;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +18,9 @@ class WebsiteUrlFactory extends Factory
     public function definition(): array
     {
         return [
-            'category_id' => Category::query()->inRandomOrder()->firstOrFail()->id,
+            'domain_id' => Domain::inRandomOrder()->first()->id,
+            'category' => fake()->randomElement(['login', 'video_calling']),
+            'site' => fake()->randomElement(['eros', 'mega', 'pd', 'skip', 'tryst']),
             'url' => $this->faker->url(),
         ];
     }

@@ -5,27 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 class WebsiteUrl extends Model
 {
     use HasFactory;
+    use \Znck\Eloquent\Traits\BelongsToThrough;
 
-    protected $fillable = ['domain_id', 'category_id', 'url'];
+    protected $fillable = ['domain_id', 'category', 'url', 'site'];
 
-    public function users(): BelongsToMany
+    public function domain(): BelongsTo
     {
-        return $this->belongsToMany(User::class, 'website_url_user');
+        return $this->belongsTo(Domain::class);
     }
 
-    public function category(): BelongsTo
+    public function user(): \Znck\Eloquent\Relations\BelongsToThrough
     {
-        return $this->belongsTo(Category::class);
-    }
-
-    public function urlTypes(): HasMany
-    {
-        return $this->hasMany(UrlType::class, 'website_url_id');
+        return $this->belongsToThrough(User::class, Domain::class);
     }
 }

@@ -4,7 +4,7 @@ import DefaultForm from "../../Components/DefaultForm.jsx";
 import Select from "react-select";
 import request from "../../utils/request.js";
 import { useEffect, useState } from "react";
-import { CATEGORIES, DOMAINS, USERS, WEBSITE_URLS } from "../../utils/api-endpoint.js";
+import { DOMAINS, USERS, WEBSITE_URLS } from "../../utils/api-endpoint.js";
 import Processing from "../../Components/Processing.jsx";
 import { useSelector } from "react-redux";
 import Button from "../../Components/Button.jsx";
@@ -14,11 +14,12 @@ const Create = () => {
   const theme = useSelector((state) => state.theme?.value)
   const [users, setUsers] = useState([]);
   const [domains, setDomains] = useState([]);
+  const [sites, setSites] = useState([])
   const [categories, setCategories] = useState([])
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState([])
+  const [selectedSiteItems, setSelectedSiteItems] = useState([])
   const [selectedDomainId, setSelectedDomainId] = useState(null)
   const [selectedUserId, setSelectedUserId] = useState(null)
-  const [pages, setPages] = useState([])
+  const [selectedCategories, setSelectedCategories] = useState([])
   const [errors, setErrors] = useState([])
   const [processing, setProcessing] = useState(false)
   const [buttonProcessing, setButtonProcessing] = useState(false)
@@ -30,8 +31,12 @@ const Create = () => {
     try {
       const { data } = await request.get(url);
       setUsers(data.users);
+      setSites(data.sites);
+      setCategories(data.categories);
     }catch (error){
       handleErrors(error)
+    } finally {
+      setProcessing(false)
     }
   }
 
@@ -46,18 +51,6 @@ const Create = () => {
     }
   }
 
-
-  const getCategories = async () => {
-    let url =`${CATEGORIES}/all`
-    try {
-      const { data } = await request.get(url);
-      setCategories(data);
-    }catch (error){
-      handleErrors(error)
-    }finally {
-      setProcessing(false)
-    }
-  }
 
   const handleErrors = (errors) => {
     if(errors?.response){
@@ -91,14 +84,14 @@ const Create = () => {
     })
   };
 
-  const handleSelectedCategories = (categories) => {
-    categories = categories.map(category => category.value)
-    setSelectedCategoryIds(categories)
+  const handleSelectedSites = (sites) => {
+    sites = sites.map(site => site.value)
+    setSelectedSiteItems(sites)
   }
 
-  const handleSelectedPages = (pages) => {
-    pages = pages.map(page => page.value)
-    setPages(pages)
+  const handleSelectedCategories = (categories) => {
+    categories = categories.map(category => category.value)
+    setSelectedCategories(categories)
   }
 
   const handleSubmit = async (e) => {
@@ -109,8 +102,8 @@ const Create = () => {
       const {data} = await request.post(WEBSITE_URLS, {
         domain: selectedDomainId,
         user: selectedUserId,
-        categories: selectedCategoryIds,
-        pages: pages,
+        sites: selectedSiteItems,
+        categories: selectedCategories,
       })
       await pageRefresh()
       setErrors([])
@@ -124,21 +117,15 @@ const Create = () => {
   }
 
   const clearForm = () => {
-    setSelectedCategoryIds([])
+    setSelectedSiteItems([])
     setSelectedDomainId(null)
     setSelectedUserId(null)
-    setPages([])
+    setSelectedCategories([])
   }
-
-  const pageOptions = [
-    {value: 'login', label: "Login Page"},
-    {value: 'video', label: "Video Calling"},
-  ]
 
 
   const pageRefresh = async () => {
     await getUsers()
-    await getCategories()
   }
 
 
@@ -178,9 +165,24 @@ const Create = () => {
               </div>
 
               <div className='w-full'>
-                <label htmlFor="category" className='mb-2 block'>Select Categories</label>
+                <label htmlFor="site" className='mb-2 block'>Select Categories</label>
                 <Select
-                  name='category'
+                  name='site'
+                  placeholder='Select'
+                  styles={multiSelectCustomStyles}
+                  isMulti
+                  options={sites}
+                  onChange={(sites) => handleSelectedSites(sites)}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                />
+                {errors?.sites && <p className='text-red-500'>{errors?.sites}</p>}
+              </div>
+
+              <div className='w-full'>
+                <label htmlFor="categories" className='mb-2 block'>Select Pages</label>
+                <Select
+                  name='categories'
                   placeholder='Select'
                   styles={multiSelectCustomStyles}
                   isMulti
@@ -190,21 +192,6 @@ const Create = () => {
                   classNamePrefix="select"
                 />
                 {errors?.categories && <p className='text-red-500'>{errors?.categories}</p>}
-              </div>
-
-              <div className='w-full'>
-                <label htmlFor="page" className='mb-2 block'>Select Pages</label>
-                <Select
-                  name='page'
-                  placeholder='Select'
-                  styles={multiSelectCustomStyles}
-                  isMulti
-                  options={pageOptions}
-                  onChange={(pages) => handleSelectedPages(pages)}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
-                />
-                {errors?.pages && <p className='text-red-500'>{errors?.pages}</p>}
               </div>
 
               <div className='flex justify-end items-end mt-4 w-full'>

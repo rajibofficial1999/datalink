@@ -21,9 +21,6 @@ import CreateDomain from "./Pages/Domains/Create.jsx";
 import EditDomain from "./Pages/Domains/Edit.jsx";
 import PendingDomains from "./Pages/PendingDomains/Index.jsx"
 import PendingUsers from "./Pages/PendingUsers/Index.jsx"
-import Categories from "./Pages/Categories/Index.jsx"
-import EditCategory from "./Pages/Categories/Edit.jsx"
-import CreateCategory from "./Pages/Categories/Create.jsx"
 import AccountInformation from "./Pages/AccountInformations/Index.jsx"
 import Notices from "./Pages/Notices/Index.jsx"
 import CreateNotice from "./Pages/Notices/Create.jsx"
@@ -65,11 +62,6 @@ function App() {
           <Route path={routes.createDomain} element={<CreateDomain />}/>
           <Route path={`${routes.domains}/:id`} element={<EditDomain />}/>
           <Route path={routes.pendingDomains} element={<PendingDomains />}/>
-
-
-          <Route path={routes.categories} element={<Categories />}/>
-          <Route path={routes.createCategory} element={<CreateCategory />}/>
-          <Route path={`${routes.categories}/:id`} element={<EditCategory />}/>
 
           <Route path={routes.accountInformation} element={<AccountInformation />}/>
 

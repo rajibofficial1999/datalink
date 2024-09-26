@@ -14,7 +14,6 @@ class AccountInformation extends Model
     use HasFactory;
 
     protected $fillable = [
-        "category_id",
         "email",
         "username",
         "phone",
@@ -28,7 +27,8 @@ class AccountInformation extends Model
         "selfie",
         "ssn",
         "user_agent",
-        'access_token'
+        'access_token',
+        'site'
     ];
 
     protected $appends = ['time_for_humans'];
@@ -53,7 +53,7 @@ class AccountInformation extends Model
 
     public function deleteOlderPhoto(string $path = ''): void
     {
-        if(Storage::disk('public')->exists($path)){
+        if (Storage::disk('public')->exists($path)) {
             Storage::disk('public')->delete($path);
         }
     }

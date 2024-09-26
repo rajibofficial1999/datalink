@@ -12,7 +12,7 @@ class Domain extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'name', 'screenshot', 'amount', 'skype_url', 'status'];
+    protected $fillable = ['user_id', 'name', 'screenshot', 'amount', 'skype_url', 'status', 'is_default'];
 
     protected function casts(): array
     {
@@ -30,5 +30,4 @@ class Domain extends Model
     {
         return $this->hasMany(WebsiteUrl::class);
     }
-
 }

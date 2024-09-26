@@ -17,13 +17,21 @@ class User extends Authenticatable
 
 
     protected $fillable = [
-        'name', 'email', 'access_token', 'team_id', 'password',
-        'two_step_auth', 'avatar', 'email_verified_at', 'status'
+        'name',
+        'email',
+        'access_token',
+        'team_id',
+        'password',
+        'two_step_auth',
+        'avatar',
+        'email_verified_at',
+        'status'
     ];
 
 
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
 
@@ -126,8 +134,8 @@ class User extends Authenticatable
         return self::where('access_token', $token)->first();
     }
 
-    public function urls(): BelongsToMany
+    public function urls()
     {
-        return $this->belongsToMany(WebsiteUrl::class, 'website_url_user');
+        return $this->hasManyThrough(WebsiteUrl::class, Domain::class);
     }
 }

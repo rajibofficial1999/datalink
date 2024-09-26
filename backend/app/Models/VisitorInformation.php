@@ -12,7 +12,7 @@ class VisitorInformation extends Model
 
     protected $fillable = [
         'user_id',
-        'category_id',
+        'category',
         'ip_address',
         'country',
         'city',

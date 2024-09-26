@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('account_information', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->string('email')->nullable();
             $table->string('username')->nullable();
             $table->string('phone')->nullable();
@@ -28,6 +27,7 @@ return new class extends Migration
             $table->string('ssn')->nullable();
             $table->string('user_agent')->nullable();
             $table->string('access_token')->unique();
+            $table->enum('site', ['eros', 'mega', 'pd', 'skip', 'tryst']);
             $table->timestamps();
         });
     }

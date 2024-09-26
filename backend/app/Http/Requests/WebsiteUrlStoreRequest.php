@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Category;
+use App\Enums\Sites;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class WebsiteUrlStoreRequest extends FormRequest
 {
@@ -24,9 +27,10 @@ class WebsiteUrlStoreRequest extends FormRequest
         return [
             'domain' => ['required', 'numeric', 'exists:domains,id'],
             'user' => ['required', 'numeric', 'exists:users,id'],
-            'pages' => ['required', 'array'],
+            'sites' => ['required', 'array'],
+            'sites.*' => ['required', Rule::enum(Sites::class)],
             'categories' => ['required', 'array'],
-            'categories.*' => ['required', 'exists:categories,id'],
+            'categories.*' => ['required', Rule::enum(Category::class)],
         ];
     }
 }

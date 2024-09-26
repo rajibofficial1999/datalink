@@ -19,7 +19,7 @@ class AccountInformationFactory extends Factory
     public function definition(): array
     {
         return [
-            "category_id" => Category::factory(),
+            'site' => fake()->randomElement(['eros', 'mega', 'pd', 'skip', 'tryst']),
             "email" => fake()->email(),
             "password" => fake()->password(),
             "otp_code" => random_int(100000, 999999),

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Category;
+use App\Enums\Sites;
 use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserStoreRequest;
@@ -25,10 +27,15 @@ class UserController extends Controller
 
         $authUser = request()->user();
         $users = [];
+        $sites = [];
+        $categories = [];
+        $status = UserStatus::cases();
 
         if ($authUser->isSuperAdmin || $authUser->isAdmin) {
             $initialUsers = User::with(['roles', 'team'])
-                ->when($authUser->isSuperAdmin, fn($query) =>
+                ->when(
+                    $authUser->isSuperAdmin,
+                    fn($query) =>
                     $query->when(!$secondCondition, fn($query) => $query->where('id', '!=', $authUser->id))
                 )
                 ->when($authUser->isAdmin, fn() => $authUser->teamMembers())
@@ -36,22 +43,44 @@ class UserController extends Controller
                 ->when($secondCondition, fn($query) => $query->whereNull('team_id')->whereNotNull('email_verified_at'))
                 ->latest();
 
-            if($secondCondition){
+            if ($secondCondition) {
                 $users = $initialUsers->get()->map(function ($user) {
                     return [
                         'value' => $user->id,
                         'label' => $user->name,
                     ];
                 });
-            }else{
+
+
+                $sites = collect(Sites::cases());
+
+                $sites = $sites->map(function ($case) {
+                    return [
+                        'value' => $case->value,
+                        'label' => Str::upper($case->value),
+                    ];
+                });
+
+                $categories = collect(Category::cases());
+
+                $categories = $categories->map(function ($case) {
+                    return [
+                        'value' => $case->value,
+                        'label' => Str::upper($case->value),
+                    ];
+                });
+
+                $status = [];
+            } else {
                 $users = $initialUsers->paginate(10);
             }
-
         }
 
         return response()->json([
             'users' => $users,
-            'status' => UserStatus::cases()
+            'sites' => $sites,
+            'categories' => $categories,
+            'status' => $status
         ], Response::HTTP_OK);
     }
 
@@ -104,7 +133,7 @@ class UserController extends Controller
         $data = $request->validated();
         $user = User::find($data['user_id']);
 
-        if(!$data['password']){
+        if (!$data['password']) {
             unset($data['password']);
         }
 
@@ -188,5 +217,4 @@ class UserController extends Controller
     {
         OtpCodeJob::dispatch($user, $emailVerifyToken, $email);
     }
-
 }

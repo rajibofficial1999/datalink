@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('website_urls', function (Blueprint $table) {
             $table->id();
             $table->foreignId('domain_id')->constrained('domains')->onDelete('cascade');
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->string('url');
+            $table->enum('category', ['login', 'video_calling'])->default('login');
+            $table->enum('site', ['eros', 'mega', 'pd', 'skip', 'tryst']);
             $table->timestamps();
         });
     }

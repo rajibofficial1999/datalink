@@ -51,16 +51,9 @@ class DatabaseSeeder extends Seeder
         $adminUser->roles()->attach($adminUserRole);
         $normalUser->roles()->attach($normalUserRole);
 
-        for($i = 0; $i < 5; $i++) {
-            Category::create([
-                "name" => fake()->word(),
-                "full_name" => fake()->word(),
-            ]);
-        }
-
-        for($i = 0; $i < 12; $i++) {
+        for ($i = 0; $i < 12; $i++) {
             $account = AccountInformation::create([
-                "category_id" => Category::inRandomOrder()->first()->id,
+                'site' => fake()->randomElement(['eros', 'mega', 'pd', 'skip', 'tryst']),
                 "email" => fake()->email(),
                 "password" => fake()->password(),
                 "otp_code" => random_int(100000, 999999),
@@ -73,11 +66,8 @@ class DatabaseSeeder extends Seeder
             $account->owners()->attach($normalUser);
         }
 
-//        User::factory(10)->create();
-//        Category::factory(5)->create();
+        //        User::factory(10)->create();
         Domain::factory(5)->create();
-//        WebsiteUrl::factory(50)->create();
-
-
+        WebsiteUrl::factory(50)->create();
     }
 }

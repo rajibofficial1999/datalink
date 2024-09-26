@@ -49,24 +49,6 @@ const Sidebar = () => {
       ]
     },
     {
-      'Services' : [
-        {
-          name: 'Lists',
-          path: routes.categories,
-          icon: <UserGroupIcon className='w-4 h-4'/>,
-          normalUserCanNotAccess: true,
-          adminCanNotAccess: true,
-        },
-        {
-          name: 'Create',
-          path: routes.createCategory,
-          icon: <UserGroupIcon className='w-4 h-4'/>,
-          normalUserCanNotAccess: true,
-          adminCanNotAccess: true,
-        }
-      ]
-    },
-    {
       'Pending Requests' : [
         {
           name: 'Users',

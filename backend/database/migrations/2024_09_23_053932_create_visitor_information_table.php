@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('visitor_information', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('cascade');
             $table->string('ip_address');
             $table->string('country');
             $table->string('city')->nullable();
             $table->string('state_name')->nullable();
             $table->string('zip_code')->nullable();
             $table->string('user_agent')->nullable();
+            $table->enum('site', ['eros', 'mega', 'pd', 'skip', 'tryst']);
             $table->timestamps();
         });
     }

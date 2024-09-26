@@ -18,12 +18,13 @@ class DomainFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => 2,
+            'user_id' => 1,
             'name' => fake()->domainName(),
             'screenshot' => fake()->imageUrl,
             'amount' => '10',
             'skype_url' => fake()->url,
             'status' => fake()->randomElement(['pending', 'approved', 'rejected']),
+            'is_default' => fake()->randomElement([true, false])
         ];
     }
 }

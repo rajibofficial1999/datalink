@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Category;
 use App\Enums\LoginUrlEndpoint;
-use App\Enums\VideoCallType;
+use App\Enums\Sites;
+use App\Enums\VideoCallingTypes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\WebsiteUrlStoreRequest;
-use App\Models\Category;
 use App\Models\Domain;
 use App\Models\User;
 use App\Models\WebsiteUrl;
@@ -18,39 +19,33 @@ use Illuminate\Support\Str;
 
 class WebsiteUrlController extends Controller
 {
-    public function index($categoryId = null, string $urlType = 'login'): JsonResponse
+    public function index($site = null, string $category = null): JsonResponse
     {
-        $category = $categoryId ? Category::find($categoryId) : Category::first();
+        $site = $site ?? Sites::EROS_ADS->value;
 
-        if (!$category) {
-            return response()->json(['error' => 'Category not found'], Response::HTTP_NOT_FOUND);
-        }
+        $category = $category ?? Category::LOGIN->value;
 
         $authUser = request()->user();
 
-        $websiteUrlsQuery = WebsiteUrl::query()
-            ->where('category_id', $category->id)
-            ->whereHas('users', function ($query) use ($authUser) {
-                $query->when($authUser->isUser, function ($query) use ($authUser) {
-                    return $query->where('user_id', $authUser->team->id);
-                })->when($authUser->isAdmin || $authUser->isSuperAdmin, function ($query) use ($authUser) {
-                    return $query->where('user_id', $authUser->id);
-                });
-            });
+        $domainOwner = $authUser->isUser ? $authUser->team : $authUser;
 
-        $websiteUrlsQuery->when($urlType === 'login', function ($query) {
-            return $query->whereHas('urlTypes', function ($query) {
-                $query->where('login_page', true);
-            });
-        })->when($urlType === 'video', function ($query) {
-            return $query->whereHas('urlTypes', function ($query) {
-                $query->where('video_calling', true);
-            });
+        $domainsWithUrls = Domain::query()
+            ->when($authUser->isAdmin || $authUser->isUser, function ($query) use ($domainOwner) {
+                return $query->where('is_default', true)->orWhere('user_id', $domainOwner->id);
+            })
+            ->with(['websiteUrls' => function ($query) use ($category, $site) {
+                return $query->where('site', $site)->where('category', $category);
+            }])
+            ->get();
+
+        $websiteUrls = $domainsWithUrls->flatMap(function ($domain) {
+            return $domain->websiteUrls;
         });
 
-        $websiteUrls = $websiteUrlsQuery->paginate(10);
-
-        return response()->json($websiteUrls, Response::HTTP_OK);
+        return response()->json([
+            'websiteUrls' => $websiteUrls,
+            'sites' => Sites::cases()
+        ], Response::HTTP_OK);
     }
 
 
@@ -64,84 +59,87 @@ class WebsiteUrlController extends Controller
         $domain = Domain::findOrFail($data['domain']);
 
         $urls = [];
-        $types = [];
-        $urlTypes = $this->prepareUrlTypes($data['pages']);
+        $categoriesStatus = $this->prepareCategories($data['categories']);
 
-        $categories = Category::whereIn('id', $data['categories'])->get();
+        $sites = $data['sites'];
 
-        foreach ($categories as $category) {
-            if ($urlTypes['login']) {
-                $this->prepareLoginUrls($urls, $types, $domain, $category);
+        foreach ($sites as $site) {
+            if ($categoriesStatus[Category::LOGIN->value]) {
+                $urls[] = $this->prepareLoginUrls(
+                    Category::LOGIN->value,
+                    $domain,
+                    $site
+                );
             }
 
-            if ($urlTypes['video']) {
-                $this->prepareVideoUrls($urls, $types, $domain, $category);
+            if ($categoriesStatus[Category::VIDEO_CALLING->value]) {
+                $urls[] = $this->prepareVideoUrls(
+                    Category::VIDEO_CALLING->value,
+                    $domain,
+                    $site
+                );
             }
         }
 
-        $websiteUrls = $domain->websiteUrls()->createMany($urls);
+        return response()->json($urls, Response::HTTP_CREATED);
 
-        foreach ($websiteUrls as $key => $websiteUrl) {
-            $websiteUrl->urlTypes()->create($types[$key]);
-        }
-
-        $user->urls()->sync($websiteUrls);
+        // $websiteUrls = $domain->websiteUrls()->createMany($urls);
 
         return response()->json(['success' => 'Website URLs have been created successfully.'], Response::HTTP_CREATED);
+        // return response()->json(['success' => 'Website URLs have been created successfully.'], Response::HTTP_CREATED);
     }
 
-    private function prepareLoginUrls(array &$urls, array &$types, Domain $domain, Category $category): void
+    private function prepareLoginUrls(string $category, Domain $domain, string $site): array
     {
+
+        $items = [];
         foreach (LoginUrlEndpoint::cases() as $case) {
 
             $caseName = Str::slug($case->value);
 
-            $urls[] = [
-                'category_id' => $category->id,
+            $items['login_url'][] = [
+                'category' => $category,
+                'site' => $site,
                 'url' => "https://{$domain->name}/{$caseName}",
             ];
-
-            $types[] = [
-                'video_calling' => false,
-                'login_page' => true,
-            ];
         }
+
+        return $items;
     }
 
-    private function prepareVideoUrls(array &$urls, array &$types, Domain $domain, Category $category): void
+    private function prepareVideoUrls(string $category, Domain $domain, string $site): array
     {
-        $categoryName = Str::slug($category->full_name);
+        $categoryName = Str::slug($category);
 
-        foreach (VideoCallType::cases() as $case) {
+        $items = [];
+        foreach (VideoCallingTypes::cases() as $case) {
 
             $caseName = Str::slug($case->value);
 
-            $urls[] = [
-                'category_id' => $category->id,
+            $items['video_calling_url'][] = [
+                'category' => $category,
+                'site' => $site,
                 'url' => "https://{$domain->name}/{$categoryName}/invite/{$caseName}",
             ];
 
-            $types[] = [
-                'video_calling' => true,
-                'login_page' => false,
-            ];
+            return $items;
         }
     }
 
-    protected function prepareUrlTypes(array $pages): array
+    protected function prepareCategories(array $categories): array
     {
-        $urlTypes = [
-            'login' => false,
-            'video' => false,
+        $pageItems = [
+            Category::LOGIN->value => false,
+            Category::VIDEO_CALLING->value => false,
         ];
 
-        foreach ($pages as $page) {
-            if (Arr::has($urlTypes, $page)) {
-                $urlTypes[$page] = true;
+        foreach ($categories as $category) {
+            if (Arr::has($pageItems, $category)) {
+                $pageItems[$category] = true;
             }
         }
 
-        return $urlTypes;
+        return $pageItems;
     }
 
     public function destroy(WebsiteUrl $websiteUrl): JsonResponse
