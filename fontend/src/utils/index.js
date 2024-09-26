@@ -16,15 +16,6 @@ const checkboxDeleteHandler = () => {
   return dataIds
 }
 
-// export const deleteMultipleData = (pageRefresh) => {
-//   let ids = checkboxDeleteHandler();
-//
-//   if(ids.length <= 0) {
-//     return false
-//   }
-// }
-
-
 
 export const handleMultipleDelete = async (dbTableName) => {
   let ids = checkboxDeleteHandler();

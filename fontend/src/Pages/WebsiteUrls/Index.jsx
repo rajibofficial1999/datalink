@@ -14,6 +14,7 @@ import { DocumentDuplicateIcon } from "@heroicons/react/24/solid/index.js";
 import DefaultTooltip from "../../Components/DefaultTooltip.jsx";
 import { successToast } from "../../utils/toasts/index.js";
 import Pagination from "../../Components/Pagination.jsx";
+import ForSuperAdmin from "../../Components/ForSuperAdmin.jsx";
 
 const Index = () => {
   const authUser = useSelector(state => state.auth.user);
@@ -23,10 +24,7 @@ const Index = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isCategoryProcessing, setIsCategoryProcessing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  const [urlType, setUrlType] = useState('login')
 
   const fetchCategories = async () => {
     setIsCategoryProcessing(true);
@@ -35,7 +33,7 @@ const Index = () => {
       setCategories(data);
       if (data.data.length > 0) {
         setCategoryId(data.data[0].id);
-        fetchWebsiteUrls(data.data[0].id, currentPage);
+        fetchWebsiteUrls(data.data[0].id, urlType, currentPage);
       }
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -44,10 +42,10 @@ const Index = () => {
     }
   };
 
-  const fetchWebsiteUrls = async (cateId = null, page) => {
+  const fetchWebsiteUrls = async (cateId = null, urlType = null, page) => {
     setIsProcessing(true);
     try {
-      const url = cateId ? `${WEBSITE_URLS}/${cateId}` : WEBSITE_URLS;
+      const url = `${WEBSITE_URLS}/${cateId}/${urlType}`;
       const { data } = await request.get(`${url}?page=${page}`);
       setWebsiteUrls(data);
     } catch (error) {
@@ -62,7 +60,7 @@ const Index = () => {
     try {
       const { data } = await request.delete(`${WEBSITE_URLS}/${websiteUrlId}`);
       successToast(data.success);
-      fetchWebsiteUrls(categoryId, currentPage);
+      fetchWebsiteUrls(categoryId, urlType, currentPage);
     } catch (error) {
       console.error('Error deleting website URL:', error);
     } finally {
@@ -72,7 +70,12 @@ const Index = () => {
 
   const handleCategoryChange = (ev) => {
     setCategoryId(parseInt(ev.target.value));
-    fetchWebsiteUrls(ev.target.value, 1)
+    fetchWebsiteUrls(ev.target.value, urlType, 1)
+  };
+
+  const handleUrlType = (ev) => {
+    setUrlType(ev.target.value);
+    fetchWebsiteUrls(categoryId, ev.target.value, 1)
   };
 
   const handlePagination = (page) => {
@@ -80,24 +83,49 @@ const Index = () => {
     fetchWebsiteUrls(categoryId, page)
   };
 
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   return (
     <Section>
       <div className="mx-auto mt-5 bg-base-100 text-base-content p-10">
-        <h4 className="mb-6 text-xl font-semibold">Website URLs</h4>
-        <div className="my-7 flex items-center justify-center gap-2 flex-wrap text-center">
-          <Processing processing={isCategoryProcessing}>
-            {categories?.data?.map(cate => (
-              <Button
-                key={cate.id}
-                className={cn('px-5 w-28', categoryId === cate.id ? '' : 'bg-gray-500')}
-                value={cate.id}
-                onClick={handleCategoryChange}
-              >
-                {cate.name}
-              </Button>
-            ))}
-          </Processing>
+        <div className='flex justify-between items-center'>
+          <h4 className="mb-6 text-xl font-semibold">Website New URLs</h4>
+          <ForSuperAdmin user={authUser}>
+            <Button as='link' to={routes.createWebsiteUrl}>Create Urls</Button>
+          </ForSuperAdmin>
         </div>
+        <Processing processing={isCategoryProcessing}>
+        <div className="my-6 flex items-center justify-center gap-2 flex-wrap text-center">
+                {categories?.data?.map(cate => (
+                  <Button
+                    key={cate.id}
+                    className={cn('px-5 w-28 text-nowrap', categoryId === cate.id ? '' : 'bg-gray-500')}
+                    value={cate.id}
+                    onClick={handleCategoryChange}
+                  >
+                    {cate.name}
+                  </Button>
+                ))}
+            </div>
+            <div className='my-6 flex items-center justify-center gap-2 flex-wrap text-center'>
+              <Button
+                className={cn('px-5 w-28 text-nowrap', urlType === 'login' ? 'bg-blue-600' : 'bg-gray-500')}
+                value='login'
+                onClick={handleUrlType}
+              >
+                Login page
+              </Button>
+              <Button
+                className={cn('px-5 w-28 text-nowrap', urlType === 'video' ? 'bg-blue-600' : 'bg-gray-500')}
+                value='video'
+                onClick={handleUrlType}
+              >
+                Video Calling
+              </Button>
+            </div>
+          </Processing>
         <div className="flex flex-col">
           <div className="flex justify-between items-center mb-6 bg-base-300 py-5 px-5">
             <h5 className="text-sm font-medium uppercase">URL</h5>

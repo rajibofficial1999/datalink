@@ -5,7 +5,6 @@ import Input from "../../Components/Input.jsx";
 import { useEffect, useRef, useState } from "react";
 import Button from "../../Components/Button.jsx";
 import request from "../../utils/request.js";
-import { useSelector } from "react-redux";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/solid/index.js";
 import DefaultTooltip from "../../Components/DefaultTooltip.jsx";
 import { DOMAIN_UPDATE, DOMAINS } from "../../utils/api-endpoint.js";
@@ -16,7 +15,6 @@ import ClipboardData from "../../Components/ClipboardData.jsx";
 import FileInput from "../../Components/FileInput.jsx";
 
 const Edit = () => {
-  const user = useSelector((state) => state.auth?.user);
   const params = useParams();
 
   const [errors, setErrors] = useState({});
@@ -37,7 +35,7 @@ const Edit = () => {
   const fetchDomain = async () => {
     setDataProcessing(true);
     try {
-      const { data } = await request.get(`${DOMAINS}/${params.id}`);
+      const { data } = await request.get(`${DOMAINS}/show/${params.id}`);
       setEditDomain(data);
       setDomain(data?.name);
       setSkypeUrl(data?.skype_url);
@@ -92,8 +90,6 @@ const Edit = () => {
   };
 
   const resetForm = () => {
-    setDomain('');
-    setSkypeUrl('');
     setScreenshot(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = ''; // Reset the file input value
@@ -125,11 +121,12 @@ const Edit = () => {
             />
 
             <div className='mt-2'>
-              <label className="text-sm">Binance ID ({binanceId})</label>
-              <DefaultTooltip value='Copy Binance ID'>
+              <label htmlFor='screenshot' className="text-sm">Binance ID ({binanceId})</label>
+              <DefaultTooltip value='Copy Binance ID' className='w-full'>
                 <ClipboardData value={binanceId}>
-                  <button type='button' className='mt-2 input input-bordered input-primary w-full flex justify-center items-center group'>
-                    <DocumentDuplicateIcon className='size-8 text-blue-600 group-hover:scale-75 duration-200' />
+                  <button type='button'
+                          className='mt-2 input input-bordered input-primary w-full flex justify-center items-center group'>
+                    <DocumentDuplicateIcon className='size-8 text-blue-600 group-hover:scale-75 duration-200'/>
                   </button>
                 </ClipboardData>
               </DefaultTooltip>

@@ -12,13 +12,14 @@ import Pagination from "../../Components/Pagination.jsx";
 import InnerSection from "../../Components/InnerSection.jsx";
 import TableCheckbox from "../../Components/TableCheckbox.jsx";
 import { handleMultipleDelete } from "../../utils/index.js";
+import Badge from "../../Components/Badge.jsx";
 
 const Index = () => {
   const [categories, setCategories] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const tableColumns = ['Name', 'Action'];
+  const tableColumns = ['Service Name', 'Full Name', 'Premium', 'Action'];
 
   const fetchCategories = async (page) => {
     setIsProcessing(true);
@@ -74,7 +75,7 @@ const Index = () => {
               {categories?.data?.map(category => (
                 <tr key={category.id}>
                   <th>
-                    <TableCheckbox value={category.id} />
+                    <TableCheckbox value={category.id}/>
                   </th>
                   <td>
                     <div className="flex items-center gap-3">
@@ -82,7 +83,17 @@ const Index = () => {
                     </div>
                   </td>
                   <td>
-                    <Action data={category} url={routes.categories} handleDelete={handleDelete} />
+                    <div className="flex items-center gap-3">
+                      <div className="font-bold">{category.full_name}</div>
+                    </div>
+                  </td>
+                  <td>
+                    {
+                      category.is_premium ? <Badge className='badge-info'>Premium</Badge> : <Badge className='badge-warning'>N/A</Badge>
+                    }
+                  </td>
+                  <td>
+                    <Action data={category} url={routes.categories} handleDelete={handleDelete}/>
                   </td>
                 </tr>
               ))}

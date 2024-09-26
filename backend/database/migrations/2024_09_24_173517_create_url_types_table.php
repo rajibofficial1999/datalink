@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('url_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('full_name')->unique();
-            $table->boolean('is_premium')->default(false);
+            $table->foreignId('website_url_id')->constrained('website_urls')->cascadeOnDelete();
+            $table->boolean('login_page')->default(true);
+            $table->boolean('video_calling')->default(true);
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('url_types');
     }
 };

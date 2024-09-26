@@ -19,20 +19,34 @@ use Illuminate\Validation\Rules\Enum;
 
 class UserController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index($firstCondition = null, $secondCondition = null): JsonResponse
     {
-        $authUser = $request->user();
+        $condition = $firstCondition === 'pending' ? '=' : '!=';
+
+        $authUser = request()->user();
         $users = [];
 
         if ($authUser->isSuperAdmin || $authUser->isAdmin) {
-            $users = User::with(['roles', 'team'])
+            $initialUsers = User::with(['roles', 'team'])
                 ->when($authUser->isSuperAdmin, fn($query) =>
-                $query->where('id', '!=', $authUser->id)
-                    ->where('status', '!=', UserStatus::PENDING))
-                ->when($authUser->isAdmin, fn() =>
-                $authUser->teamMembers()->where('status', '!=', UserStatus::PENDING))
-                ->latest()
-                ->paginate(10);
+                    $query->when(!$secondCondition, fn($query) => $query->where('id', '!=', $authUser->id))
+                )
+                ->when($authUser->isAdmin, fn() => $authUser->teamMembers())
+                ->where('status', $condition, UserStatus::PENDING)
+                ->when($secondCondition, fn($query) => $query->whereNull('team_id')->whereNotNull('email_verified_at'))
+                ->latest();
+
+            if($secondCondition){
+                $users = $initialUsers->get()->map(function ($user) {
+                    return [
+                        'value' => $user->id,
+                        'label' => $user->name,
+                    ];
+                });
+            }else{
+                $users = $initialUsers->paginate(10);
+            }
+
         }
 
         return response()->json([
@@ -139,14 +153,14 @@ class UserController extends Controller
 
     protected function deleteUserAssets(User $user): void
     {
-        if (Storage::disk('public')->exists($user->avatar)) {
-            Storage::disk('public')->delete($user->avatar);
+        if (Storage::disk('public')->exists($user->avatar ?? '')) {
+            Storage::disk('public')->delete($user->avatar ?? '');
         }
 
         if ($user->isAdmin) {
             foreach ($user->teamMembers as $member) {
-                if (Storage::disk('public')->exists($member->avatar)) {
-                    Storage::disk('public')->delete($member->avatar);
+                if (Storage::disk('public')->exists($member->avatar ?? '')) {
+                    Storage::disk('public')->delete($member->avatar ?? '');
                 }
             }
             $user->teamMembers()->delete();

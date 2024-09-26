@@ -22,9 +22,10 @@ class WebsiteUrlStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'endpoints' => ['nullable', 'array'],
-            'categories' => ['required', 'array'],
             'domain' => ['required', 'numeric', 'exists:domains,id'],
+            'user' => ['required', 'numeric', 'exists:users,id'],
+            'pages' => ['required', 'array'],
+            'categories' => ['required', 'array'],
             'categories.*' => ['required', 'exists:categories,id'],
         ];
     }

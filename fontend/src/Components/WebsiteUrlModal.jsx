@@ -63,8 +63,10 @@ const WebsiteUrlModal = ({domain, pageRefresh}) => {
 
   const modalDismiss = () => {
     setInputs([''])
-    setServices({})
     setEndpoints({})
+    setEndpoints(prev => ({
+      ['']: null
+    }));
   }
 
   const handleSubmit = async (event) => {
@@ -80,10 +82,14 @@ const WebsiteUrlModal = ({domain, pageRefresh}) => {
         categories: servicesValues,
         domain: domain?.id
       })
-      successToast(data.success)
-      modalDismissForm.current.submit()
-      pageRefresh()
-      modalDismiss()
+
+      if(data.success){
+        successToast(data.success)
+        modalDismissForm.current.submit()
+        pageRefresh()
+        modalDismiss()
+      }
+
     }catch (error){
       if(error.response){
         setErrors(Object.values(error.response.data.errors))

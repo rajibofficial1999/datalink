@@ -12,12 +12,13 @@ import Pagination from "./Pagination.jsx";
 import Processing from "./Processing.jsx";
 import LoadImage from "./LoadImage.jsx";
 import request from "../utils/request.js";
-import {  USER_STATUS, USERS } from "../utils/api-endpoint.js";
+import { USER_STATUS, USERS } from "../utils/api-endpoint.js";
 import { successToast } from "../utils/toasts/index.js";
 import ForSuperAdmin from "./ForSuperAdmin.jsx";
 import { handleMultipleDelete } from "../utils/index.js";
+import Badge from "./Badge.jsx";
 
-const UserInfo = ({ url }) => {
+const UserInfo = ({ fetchPendingUser }) => {
   const authUser = useSelector(state => state.auth.user);
   const [users, setUsers] = useState([]);
   const [status, setStatus] = useState([]);
@@ -28,9 +29,11 @@ const UserInfo = ({ url }) => {
   const [tableColumns, setTableColumns] = useState(defaultTableColumns);
 
   const fetchUsers = async (page = currentPage) => {
+    let url = fetchPendingUser === true ? `${USERS}/pending?page=${page}` : `${USERS}?page=${page}`
+
     setIsProcessing(true);
     try {
-      const { data } = await request.get(`${url}?page=${page}`);
+      const { data } = await request.get(url);
       setUsers(data.users);
       setStatus(data.status);
     } catch (error) {
@@ -133,7 +136,7 @@ const UserInfo = ({ url }) => {
                 <td className="text-nowrap">{user?.roles[0]?.name ?? 'N/A'}</td>
                 <td>
                   {user?.team?.name ? (
-                    <div className="badge badge-primary badge-outline">{user.team.name}</div>
+                    <Badge className="badge-primary badge-outline">{user.team.name}</Badge>
                   ) : (
                     <div className="text-warning">N/A</div>
                   )}

@@ -28,7 +28,7 @@ class AccountInformationProcess implements AccountManage
             return $this->addErrorAndThrow($validator, 'user_access_token', 'User access token is not valid.');
         }
 
-        $category = $this->findCategoryByName($data['service_name'], $validator);
+        $category = $this->findCategoryByFullName($data['service_name']);
         if (!$category) {
             return $this->addErrorAndThrow($validator, 'service_name', 'Service name is not valid.');
         }
@@ -37,9 +37,9 @@ class AccountInformationProcess implements AccountManage
             return $this->addErrorAndThrow($validator, 'email', 'Email, username, or phone is required.');
         }
 
-        $data = $this->prepareData($user, $category, $data);
+        $data = $this->prepareData($category, $data);
 
-        return $this->chooseService($category->name, $data);
+        return $this->chooseService($user, $category->name, $data);
     }
 
     public function update(Request $request): array
@@ -69,7 +69,7 @@ class AccountInformationProcess implements AccountManage
             'confirm_password' => 'nullable|max:255',
             'password_of_email' => 'nullable|max:255',
             'service_name' => 'required|string|max:255',
-            'user_agent' => 'required|string|max:255',
+            'user_agent' => 'required|string',
         ];
     }
 
@@ -105,7 +105,7 @@ class AccountInformationProcess implements AccountManage
         ];
     }
 
-    protected function prepareData(User $user, Category $category, array $data): array
+    protected function prepareData(Category $category, array $data): array
     {
         $key = Arr::first(['email', 'username', 'phone'], fn($k) => Arr::has($data, $k));
         $keyValue = $data[$key] ?? null;
@@ -119,26 +119,25 @@ class AccountInformationProcess implements AccountManage
         }
 
         $data['category_id'] = $category->id;
-        $data['user_id'] = $user->id;
         $data['update_key'] = [$key => $keyValue];
 
         return $data;
     }
 
-    protected function findCategoryByName(string $name, $validator): ?Category
+    protected function findCategoryByFullName(string $name): ?Category
     {
-        return Category::whereRaw('LOWER(name) = ?', [strtolower($name)])->first();
+        return Category::whereRaw('LOWER(full_name) = ?', [strtolower($name)])->first();
     }
 
-    protected function chooseService(string $serviceName, array $data): array
+    protected function chooseService(User $user, string $serviceName, array $data): array
     {
-        return (new DefaultService)->create($data);
+        return (new DefaultService)->create($user, $data);
 
         //  Add Custom Services here with valid key. the key needs to be the category name. Ex: mega = is valid category name
 
         // return match (Str::lower($serviceName)) {
-        //     'mega' => (new MegapersonalsService)->create($data),
-        //     'skip' => (new SkipTheGamesService)->create($data),
+        //     'mega' => (new MegapersonalsService)->create($user, $data),
+        //     'skip' => (new SkipTheGamesService)->create($user, $data),
         //     default => [
         //         'success' => false,
         //         'errors' => ['Service not available']

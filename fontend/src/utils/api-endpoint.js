@@ -13,10 +13,6 @@ export const DOMAINS = '/domains'
 export const DOMAIN_UPDATE = '/domains/update'
 export const DOMAIN_STATUS = '/domains/status'
 
-export const PENDING_DOMAINS = '/pending-domains'
-
-export const PENDING_USERS = '/pending-users'
-
 export const ACCOUNT_INFORMATION = '/account-information'
 
 export const MULTIPLE_DELETE_DATA = '/multiple-delete-data'

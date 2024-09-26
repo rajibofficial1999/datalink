@@ -2,9 +2,15 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Domain;
 use App\Rules\ValidDomain;
 use App\Rules\ValidSkypeUrl;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class DomainStoreRequest extends FormRequest
 {
@@ -24,9 +30,26 @@ class DomainStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'domain' => ['required','max:255','unique:domains,name', new ValidDomain],
+            'domain' => [
+                    'required',
+                    'max:255',
+                    Rule::unique('domains', 'name'),
+                    new ValidDomain
+            ],
             'skype_url' => ['required','max:255', new ValidSkypeUrl],
             'screenshot' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $name = $this->input('domain');
+        if(!Str::startsWith($this->input('domain'), 'www.')){
+            $name = "www." . $this->input('domain');
+        }
+
+        $this->merge([
+            'domain' => $name,
+        ]);
     }
 }

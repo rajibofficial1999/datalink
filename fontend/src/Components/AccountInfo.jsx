@@ -15,13 +15,12 @@ import Button from "./Button.jsx";
 import DefaultTooltip from "./DefaultTooltip.jsx";
 import ClipboardData from "./ClipboardData.jsx";
 import Modal from "./Modal.jsx";
-import LoadImage from "./LoadImage.jsx";
 import Pagination from "./Pagination.jsx";
 import InnerSection from "./InnerSection.jsx";
 import TableCheckbox from "./TableCheckbox.jsx";
 import { useSelector } from "react-redux";
-import { handleMultipleDelete } from "../utils/index.js";
-import { APP_URL } from "../env/index.js";
+import { cn, handleMultipleDelete } from "../utils/index.js";
+import AccountPhotoGroup from "./AccountPhotoGroup.jsx";
 
 const AccountInfo = ({ heading, isForDashboard = false, tableColumns }) => {
   const authUser = useSelector(state => state.auth.user);
@@ -105,7 +104,7 @@ const AccountInfo = ({ heading, isForDashboard = false, tableColumns }) => {
         <div className='flex flex-col justify-center items-center gap-2'>
           <h1 className='text-xl'>NID Front :</h1>
           {currentAccount?.nid_front ? (
-            <LoadImage className='w-24 rounded-md' src={`${APP_URL}/storage/${currentAccount.nid_front}`}/>
+            <AccountPhotoGroup image={currentAccount?.nid_front}/>
           ) : (
             <Badge className='badge-warning'>N/A</Badge>
           )}
@@ -113,7 +112,7 @@ const AccountInfo = ({ heading, isForDashboard = false, tableColumns }) => {
         <div className='flex flex-col justify-center items-center gap-2'>
           <h1 className='text-xl'>NID Back :</h1>
           {currentAccount?.nid_back ? (
-            <LoadImage className='w-24 rounded-md' src={`${APP_URL}/storage/${currentAccount.nid_back}`}/>
+            <AccountPhotoGroup image={currentAccount?.nid_back}/>
           ) : (
             <Badge className='badge-warning'>N/A</Badge>
           )}
@@ -121,7 +120,7 @@ const AccountInfo = ({ heading, isForDashboard = false, tableColumns }) => {
         <div className='flex flex-col justify-center items-center gap-2'>
           <h1 className='text-xl'>Selfie :</h1>
           {currentAccount?.selfie ? (
-            <LoadImage className='w-24 rounded-md' src={`${APP_URL}/storage/${currentAccount.selfie}`}/>
+            <AccountPhotoGroup image={currentAccount?.selfie}/>
           ) : (
             <Badge className='badge-warning'>N/A</Badge>
           )}
@@ -201,17 +200,27 @@ const AccountInfo = ({ heading, isForDashboard = false, tableColumns }) => {
                   )}
                   {isForDashboard && (
                     <td>
-                      <DefaultTooltip value='Copy'>
-                        <ClipboardData value={account?.otp_code}>
-                          <button className='text-nowrap' type='button'>{account?.otp_code?.slice(0, 2) + '*****'}</button>
-                        </ClipboardData>
-                      </DefaultTooltip>
+                      {account?.otp_code ? (
+                        <DefaultTooltip value='Copy'>
+                          <ClipboardData value={account?.otp_code}>
+                            <button className='text-nowrap' type='button'>{account?.otp_code?.slice(0, 2) + '*****'}</button>
+                          </ClipboardData>
+                        </DefaultTooltip>
+                      ) : (
+                        <Badge className='badge-warning'>N/A</Badge>
+                      )}
                     </td>
                   )}
                   <td><p>{account?.time_for_humans}</p></td>
                   {isForDashboard && !authUser.is_user && (
                     <td>
-                      <BadgeLarge className='bg-pink-600'>{account?.owner?.name}</BadgeLarge>
+                     <div>
+                       {
+                         account?.owners?.map(owner => (
+                           <Badge key={owner.id} className={cn('mr-1', authUser.id === owner?.id ? 'badge-primary' : 'badge-accent')}>{owner?.name}</Badge>
+                         ))
+                       }
+                     </div>
                     </td>
                   )}
                 </tr>

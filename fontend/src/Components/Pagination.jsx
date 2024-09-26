@@ -38,30 +38,33 @@ const Pagination = ({data, handlePagination, currentPage}) => {
 
   return (
     <>
-      <div className="flex items-center justify-center">
-        <div className="flex gap-3 flex-wrap p-6 py-12">
-          <ul className="flex gap-2">
-            {
-              data?.links?.map((link, index) => (
-                <li key={link.label}>
-                  <Button
-                    onClick={() => visitPage(link)}
-                    className={
+      {
+        data?.total > data?.per_page &&
+        <div className="flex items-center justify-center">
+          <div className="flex gap-3 flex-wrap p-6 py-12">
+            <ul className="flex gap-2">
+              {
+                data?.links?.map((link, index) => (
+                  <li key={link.label}>
+                    <Button
+                      onClick={() => visitPage(link)}
+                      className={
                         cn('size-10 hover:bg-blue-900',
                           link.active ? 'bg-blue-900 cursor-auto' : '',
                           link.url ? '' : 'cursor-auto hover:bg-blue-600',
                         )
                       }
-                  >
-                    {handleLabel(link.label)}
-                  </Button>
-                </li>
-              ))
-            }
+                    >
+                      {handleLabel(link.label)}
+                    </Button>
+                  </li>
+                ))
+              }
 
-          </ul>
+            </ul>
+          </div>
         </div>
-      </div>
+      }
     </>
   )
 }

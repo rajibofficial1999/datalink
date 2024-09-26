@@ -128,6 +128,10 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/webmozart/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/geoip2/geoip2" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/maxmind-db/reader" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/maxmind/web-service-common" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/stevebauman/location" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DomainStoreRequest;
 use App\Http\Requests\DomainUpdateRequest;
 use App\Models\Domain;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,19 +18,20 @@ use Illuminate\Validation\Rules\Enum;
 
 class DomainController extends Controller
 {
-    public function index(Request $request)
+    public function index($condition = null): JsonResponse
     {
-        $authUser = $request->user();
+        $condition = $condition ? '=' : '!=';
+        $authUser = request()->user();
 
         $domains = [];
         if($authUser->isAdmin || $authUser->isSuperAdmin) {
             $domains = Domain::query()
                 ->with('user')
-                ->where('status', '!=', DomainStatus::PENDING)
-                ->when($authUser->isAdmin, function ($query) use ($authUser) {
+                ->where('status', $condition, DomainStatus::PENDING)
+                ->when($authUser->isAdmin, function ($query) use ($authUser, $condition) {
                     return $authUser->domains()
                         ->with('user')
-                        ->where('status', '!=', DomainStatus::PENDING);
+                        ->where('status', $condition, DomainStatus::PENDING);
                 })
                 ->latest()
                 ->paginate(10);
@@ -42,7 +44,7 @@ class DomainController extends Controller
     }
 
 
-    public function store(DomainStoreRequest $request)
+    public function store(DomainStoreRequest $request): JsonResponse
     {
         Gate::authorize('create', Domain::class);
 
@@ -65,7 +67,7 @@ class DomainController extends Controller
         return response()->json(['success' => 'User has been created successfully.'], Response::HTTP_CREATED);
     }
 
-    public function show(Domain $domain)
+    public function show(Domain $domain): JsonResponse
     {
         Gate::authorize('view', $domain);
 
@@ -76,11 +78,9 @@ class DomainController extends Controller
     {
         Gate::authorize('delete', $domain);
 
-        if(Storage::disk('public')->exists($domain->screenshot)){
-            Storage::disk('public')->delete($domain->screenshot);
+        if(Storage::disk('public')->exists($domain->screenshot ?? '')){
+            Storage::disk('public')->delete($domain->screenshot ?? '');
         }
-
-        $domain->websiteUrls()->delete();
 
         $domain->delete();
 
@@ -104,8 +104,8 @@ class DomainController extends Controller
 
         if($request->hasFile('screenshot')) {
 
-            if(Storage::disk('public')->exists($domain->screenshot)){
-                Storage::disk('public')->delete($domain->screenshot);
+            if(Storage::disk('public')->exists($domain->screenshot ?? '')){
+                Storage::disk('public')->delete($domain->screenshot ?? '');
             }
 
             $imagePath = $request->file('screenshot')->store('screenshots', 'public');
@@ -120,7 +120,7 @@ class DomainController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function domainStatus(Request $request, Domain $domain)
+    public function domainStatus(Request $request, Domain $domain): JsonResponse
     {
         Gate::authorize('updateDomainStatus', Domain::class);
 
@@ -128,12 +128,24 @@ class DomainController extends Controller
             'status' => ['required', new Enum(DomainStatus::class)],
         ]);
 
-        if($data['status'] === DomainStatus::REJECTED->value) {
-            $domain->websiteUrls()->delete();
-        }
-
         $domain->update($data);
 
         return response()->json(['success' => 'Domain status has been changed.'], Response::HTTP_OK);
     }
+
+    public function userDomains(User $user): JsonResponse
+    {
+
+        $domains = $user->domains->map(function ($domain) {
+            return [
+                'value' => $domain->id,
+                'label' => $domain->name,
+            ];
+        });
+
+        return response()->json([
+            'domains' => $domains,
+        ], Response::HTTP_OK);
+    }
+
 }

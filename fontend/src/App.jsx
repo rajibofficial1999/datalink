@@ -13,6 +13,7 @@ import EmailVerification from "./Pages/Auth/EmailVerification.jsx";
 
 import Users from "./Pages/Users/Index.jsx";
 import WebsiteUrls from "./Pages/WebsiteUrls/Index.jsx";
+import WebsiteUrlCreate from "./Pages/WebsiteUrls/Create.jsx";
 import Domains from "./Pages/Domains/Index.jsx"
 import CreateUser from "./Pages/Users/Create.jsx";
 import EditUser from "./Pages/Users/Edit.jsx";
@@ -31,7 +32,6 @@ import Supports from "./Pages/Supports/Index.jsx"
 import CreateSupport from "./Pages/Supports/Create.jsx"
 import EditSupport from "./Pages/Supports/Edit.jsx"
 import Profile from "./Pages/Profile.jsx";
-
 
 function App() {
   const theme = useSelector((state) => state.theme?.value)
@@ -59,6 +59,7 @@ function App() {
           <Route path={routes.pendingUsers} element={<PendingUsers />}/>
 
           <Route path={routes.websiteUrls} element={<WebsiteUrls />}/>
+          <Route path={routes.createWebsiteUrl} element={<WebsiteUrlCreate />}/>
 
           <Route path={routes.domains} element={<Domains />}/>
           <Route path={routes.createDomain} element={<CreateDomain />}/>

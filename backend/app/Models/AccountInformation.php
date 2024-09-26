@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
 
 class AccountInformation extends Model
@@ -13,7 +14,6 @@ class AccountInformation extends Model
     use HasFactory;
 
     protected $fillable = [
-        "user_id",
         "category_id",
         "email",
         "username",
@@ -39,11 +39,6 @@ class AccountInformation extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function owner(): BelongsTo
-    {
-        return $this->belongsTo(User::class,'user_id');
-    }
-
     public function timeForHumans(): Attribute
     {
         return Attribute::make(
@@ -61,5 +56,10 @@ class AccountInformation extends Model
         if(Storage::disk('public')->exists($path)){
             Storage::disk('public')->delete($path);
         }
+    }
+
+    public function owners(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
     }
 }

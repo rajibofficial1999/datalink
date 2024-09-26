@@ -8,6 +8,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class AccountInformationController extends Controller
 {
@@ -16,18 +18,28 @@ class AccountInformationController extends Controller
         $authUser = $request->user();
 
         $accounts = AccountInformation::query()
-                        ->with(['category', 'owner'])
-                        ->when($authUser->isAdmin, function ($query) use ($authUser) {
-                            return $query->where('user_id', $authUser->id)
-                                ->orWhereHas('owner', function ($query) use ($authUser) {
-                                    $query->where('team_id', $authUser->id);
-                                });
-                        })
-                        ->when($authUser->isUser, function ($query) use ($authUser) {
-                            return $query->where('user_id', $authUser->id);
-                        })
-                        ->orderBy('updated_at', 'desc')
-                        ->paginate(10);
+            ->with('category')
+            ->when($authUser->isAdmin, function ($query) use ($authUser) {
+                return $query->whereHas('owners', function ($query) use ($authUser) {
+                    return $query->where('user_id', $authUser->id)->orWhere('team_id', $authUser->id);
+                });
+            })
+            ->when($authUser->isUser, function ($query) use ($authUser) {
+                return $query->whereHas('owners', function ($query) use ($authUser) {
+                    return $query->where('user_id', $authUser->id);
+                });
+            })
+            ->when(!$authUser->isUser, function ($query) use ($authUser) {
+                return $query->when($authUser->isSuperAdmin, function ($query) use ($authUser) {
+                    return $query->with('owners');
+                })->when($authUser->isAdmin, function ($query) use ($authUser) {
+                    return $query->with(['owners' => function ($query) use ($authUser) {
+                        return $query->where('user_id', $authUser->id)->orWhere('team_id', $authUser->id);
+                    }]);
+                });
+            })
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10);
 
         return response()->json($accounts, Response::HTTP_OK);
     }

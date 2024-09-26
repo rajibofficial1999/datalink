@@ -19,7 +19,6 @@ class WebsiteUrlFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::query()->inRandomOrder()->firstOrFail()->id,
             'category_id' => Category::query()->inRandomOrder()->firstOrFail()->id,
             'url' => $this->faker->url(),
         ];

@@ -18,12 +18,12 @@ class DomainFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::query()->inRandomOrder()->firstOrFail()->id,
+            'user_id' => 2,
             'name' => fake()->domainName(),
             'screenshot' => fake()->imageUrl,
             'amount' => '10',
             'skype_url' => fake()->url,
-            'status' => fake()->randomElement(['pending', 'approved', 'suspended', 'rejected']),
+            'status' => fake()->randomElement(['pending', 'approved', 'rejected']),
         ];
     }
 }

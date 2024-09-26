@@ -56,7 +56,7 @@ const Edit = () => {
   const getUser = async () => {
     setDataProcessing(true);
     try {
-      const { data } = await request.get(`${USERS}/${params.id}`);
+      const { data } = await request.get(`${USERS}/show/${params.id}`);
       setCurrentUser(data)
       setForm({
         name: data?.name,

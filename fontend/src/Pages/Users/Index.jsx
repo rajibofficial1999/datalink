@@ -1,4 +1,3 @@
-import { USERS } from "../../utils/api-endpoint.js";
 import Section from "../../Components/Section.jsx";
 import InnerSection from "../../Components/InnerSection.jsx";
 import UserInfo from "../../Components/UserInfo.jsx";
@@ -8,7 +7,7 @@ const Index = () => {
     <Section>
       <InnerSection heading='Users'>
         <UserInfo
-          url={USERS}
+          fetchPendingUser={false}
         />
       </InnerSection>
     </Section>

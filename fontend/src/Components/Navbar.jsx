@@ -99,7 +99,7 @@ const Navbar = () => {
                         </li>
                       ))
                       :
-                      <p className='text-center mt-3'>Records not found</p>
+                      <p className='text-center mt-3'>Empty!</p>
                   }
 
               </div>

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Rules\ValidDomain;
 use App\Rules\ValidSkypeUrl;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class DomainUpdateRequest extends FormRequest
@@ -37,5 +38,17 @@ class DomainUpdateRequest extends FormRequest
             'screenshot' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'domain_id' => 'required|numeric|exists:domains,id',
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $name = $this->input('domain');
+        if(!Str::startsWith($this->input('domain'), 'www.')){
+            $name = "www." . $this->input('domain');
+        }
+
+        $this->merge([
+            'domain' => $name,
+        ]);
     }
 }

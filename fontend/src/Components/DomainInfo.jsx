@@ -7,9 +7,6 @@ import TabContent from "./TabContent.jsx";
 import TabItem from "./TabItem.jsx";
 import Action from "./Action.jsx";
 import { routes } from "../routes/index.js";
-import DefaultTooltip from "./DefaultTooltip.jsx";
-import Button from "./Button.jsx";
-import { PlusIcon } from "@heroicons/react/24/solid/index.js";
 import Pagination from "./Pagination.jsx";
 import Processing from "./Processing.jsx";
 import { useSelector } from "react-redux";
@@ -17,18 +14,17 @@ import { useEffect, useState } from "react";
 import request from "../utils/request.js";
 import { DOMAIN_STATUS, DOMAINS } from "../utils/api-endpoint.js";
 import { successToast } from "../utils/toasts/index.js";
-import WebsiteUrlModal from "./WebsiteUrlModal.jsx";
 import LoadImage from "./LoadImage.jsx";
 import ForSuperAdmin from "./ForSuperAdmin.jsx";
 import Badge from "./Badge.jsx";
-import { handleMultipleDelete } from "../utils/index.js";
+import { cn, handleMultipleDelete } from "../utils/index.js";
+import ForAdminUser from "./ForAdminUser.jsx";
 
-const DomainInfo = ({ url }) => {
+const DomainInfo = ({ fetchPendingDomain }) => {
   const authUser = useSelector(state => state.auth.user);
   const [domains, setDomains] = useState([]);
   const [status, setStatus] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [approveDomain, setApproveDomain] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [tableColumns, setTableColumns] = useState([
     'Domain',
@@ -51,8 +47,9 @@ const DomainInfo = ({ url }) => {
 
   const fetchDomains = async (page) => {
     setIsProcessing(true);
+    let url = fetchPendingDomain === true ? `${DOMAINS}/pending?page=${page}` : `${DOMAINS}?page=${page}`
     try {
-      const { data } = await request.get(`${url}?page=${page}`);
+      const { data } = await request.get(url);
       setDomains(data.domains);
       setStatus(data.status);
     } catch (error) {
@@ -77,11 +74,6 @@ const DomainInfo = ({ url }) => {
 
   const handleStatusChange = async (domain, value) => {
     if (domain.status === value) return;
-
-    if (value === 'approved') {
-      handleWebsiteUrlModal(domain)
-      return;
-    }
 
     setIsProcessing(true);
     try {
@@ -108,24 +100,17 @@ const DomainInfo = ({ url }) => {
     setIsProcessing(false)
   }
 
-  const handleWebsiteUrlModal = (domain) => {
-    setApproveDomain(domain)
-    document.getElementById('modal-lg').showModal()
-  }
-
   const renderTableRows = () => {
     return domains?.data?.map(domain => (
       <tr key={domain.id}>
         <th>
-          <TableCheckbox value={domain.id} />
+          <TableCheckbox value={domain.id}/>
         </th>
         <td>
-          <div className="flex items-center gap-3">
-            <div className="font-bold">{domain.name}</div>
-          </div>
+          <div className="font-bold">{domain.name}</div>
         </td>
         <td>
-          <LoadImage className='size-14 rounded-md' src={`${APP_URL}/storage/${domain.screenshot}`} alt="screenshot" />
+          <LoadImage className='size-14 rounded-md' src={`${APP_URL}/storage/${domain.screenshot}`} alt="screenshot"/>
         </td>
         <td>
           ${domain.amount ?? 0}
@@ -147,23 +132,15 @@ const DomainInfo = ({ url }) => {
             </TabContent>
           </td>
         </ForSuperAdmin>
-        {authUser?.is_admin && (
+        <ForAdminUser user={authUser}>
           <td>
             <Badge className={cn('badge-info text-white', domain.status === 'pending' && 'badge-warning')}>
               {domain.status}
             </Badge>
           </td>
-        )}
+        </ForAdminUser>
         <td>
-          <Action data={domain} url={routes.domains} handleDelete={handleDelete}>
-            {domain.status === 'approved' && authUser.is_super_admin && (
-              <DefaultTooltip value='Add Urls'>
-                <Button onClick={() => handleWebsiteUrlModal(domain)} type='button' className='bg-green-600 hover:bg-green-700 duration-200'>
-                  <PlusIcon className='size-4' />
-                </Button>
-              </DefaultTooltip>
-            )}
-          </Action>
+          <Action data={domain} url={routes.domains} handleDelete={handleDelete} />
         </td>
       </tr>
     ));
@@ -171,7 +148,6 @@ const DomainInfo = ({ url }) => {
 
   return (
     <>
-      <WebsiteUrlModal domain={approveDomain} pageRefresh={fetchDomains} />
       <Processing processing={isProcessing}>
         <ShowDataIfFound data={domains?.data}>
           <Table tableColumns={tableColumns} handleCheckedItems={handleCheckedItems}>

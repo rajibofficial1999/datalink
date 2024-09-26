@@ -1,6 +1,8 @@
-const DefaultForm = ({ children, ...props }) => {
+import { cn } from "../utils/index.js";
+
+const DefaultForm = ({ children, className = '', ...props }) => {
   return (
-    <form {...props}>
+    <form {...props} className={cn(className)}>
       {children}
     </form>
   )

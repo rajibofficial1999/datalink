@@ -11,6 +11,7 @@ import { DOMAINS } from "../../utils/api-endpoint.js";
 import { successToast } from "../../utils/toasts/index.js";
 import ClipboardData from "../../Components/ClipboardData.jsx";
 import FileInput from "../../Components/FileInput.jsx";
+import SelectInput from "../../Components/SelectInput.jsx";
 
 const Create = () => {
   const [errors, setErrors] = useState({});
@@ -29,10 +30,10 @@ const Create = () => {
     try {
       const { data } = await request.post(DOMAINS, formData);
       handleSuccess(data);
+      resetForm();
     } catch (error) {
       handleError(error);
     } finally {
-      resetForm();
       setIsProcessing(false);
     }
   };
@@ -53,6 +54,7 @@ const Create = () => {
   };
 
   const handleError = (error) => {
+    console.log(error)
     if (error.response) {
       setErrors(error.response.data.errors);
     } else {
@@ -71,7 +73,7 @@ const Create = () => {
 
   return (
     <Section>
-      <Breadcrumbs>Create Domain</Breadcrumbs>
+      <Breadcrumbs>Add a New Domain</Breadcrumbs>
       <div className='bg-base-100 text-base-content w-full md:max-w-3xl mx-auto mt-5 p-10'>
         <DefaultForm onSubmit={handleSubmit}>
           <Input

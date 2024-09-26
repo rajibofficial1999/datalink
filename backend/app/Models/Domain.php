@@ -30,4 +30,5 @@ class Domain extends Model
     {
         return $this->hasMany(WebsiteUrl::class);
     }
+
 }

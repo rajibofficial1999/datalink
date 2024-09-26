@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Category;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -20,7 +19,6 @@ class AccountInformationFactory extends Factory
     public function definition(): array
     {
         return [
-            "user_id" => User::query()->inRandomOrder()->first()->id,
             "category_id" => Category::factory(),
             "email" => fake()->email(),
             "password" => fake()->password(),

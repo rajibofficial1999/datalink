@@ -6,6 +6,7 @@ export const routes = {
   createUser: '/users/create',
   overview: '/overview',
   websiteUrls: '/website-urls',
+  createWebsiteUrl: '/website-urls/create',
   domains: '/domains',
   createDomain: '/domains/create',
   pendingUsers: '/pending-users',

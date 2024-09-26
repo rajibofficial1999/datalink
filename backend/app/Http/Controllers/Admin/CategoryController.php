@@ -12,9 +12,20 @@ use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
-    public function index(): JsonResponse
+    public function index($condition = null): JsonResponse
     {
-        $categories = Category::paginate(10);
+        $initialCategory = Category::query();
+
+        if($condition){
+            $categories = $initialCategory->get()->map(function ($user) {
+                return [
+                    'value' => $user->id,
+                    'label' => $user->name,
+                ];
+            });
+        }else{
+            $categories = $initialCategory->paginate(10);
+        }
 
         return response()->json($categories, Response::HTTP_OK);
     }
@@ -70,6 +81,8 @@ class CategoryController extends Controller
 
         return $request->validate([
             'name' => ['required', 'string', 'max:255', $uniqueRule],
+            'full_name' => ['nullable', 'string', 'max:255'],
+            'is_premium' => ['required', 'boolean'],
         ]);
     }
 }

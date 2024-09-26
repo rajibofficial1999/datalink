@@ -56,14 +56,14 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
+    public function accounts(): BelongsToMany
+    {
+        return $this->belongsToMany(AccountInformation::class);
+    }
+
     public function domains(): HasMany
     {
         return $this->hasMany(Domain::class);
-    }
-
-    public function websiteUrls(): HasMany
-    {
-        return $this->hasMany(WebsiteUrl::class);
     }
 
     public function supports(): HasMany
@@ -124,5 +124,10 @@ class User extends Authenticatable
     public static function findUserByAccessToken($token): ?User
     {
         return self::where('access_token', $token)->first();
+    }
+
+    public function urls(): BelongsToMany
+    {
+        return $this->belongsToMany(WebsiteUrl::class, 'website_url_user');
     }
 }

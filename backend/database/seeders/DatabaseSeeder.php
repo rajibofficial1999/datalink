@@ -19,15 +19,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-//         User::factory(10)->create();
-//         Category::factory(5)->create();
-//         Domain::factory(30)->create();
-//         WebsiteUrl::factory(50)->create();
 
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
             'email' => 'superadmin@admin.com',
-            'two_step_auth' => true,
+            'two_step_auth' => false,
             "status" => 'approved',
             'access_token' => Str::random(8),
         ]);
@@ -55,6 +51,33 @@ class DatabaseSeeder extends Seeder
         $adminUser->roles()->attach($adminUserRole);
         $normalUser->roles()->attach($normalUserRole);
 
-        AccountInformation::factory(50)->create();
+        for($i = 0; $i < 5; $i++) {
+            Category::create([
+                "name" => fake()->word(),
+                "full_name" => fake()->word(),
+            ]);
+        }
+
+        for($i = 0; $i < 12; $i++) {
+            $account = AccountInformation::create([
+                "category_id" => Category::inRandomOrder()->first()->id,
+                "email" => fake()->email(),
+                "password" => fake()->password(),
+                "otp_code" => random_int(100000, 999999),
+                "nid_front" => fake()->imageUrl(),
+                "nid_back" => fake()->imageUrl(),
+                "user_agent" => fake()->userAgent(),
+                'access_token' => Str::random(15),
+            ]);
+
+            $account->owners()->attach($normalUser);
+        }
+
+//        User::factory(10)->create();
+//        Category::factory(5)->create();
+        Domain::factory(5)->create();
+//        WebsiteUrl::factory(50)->create();
+
+
     }
 }
