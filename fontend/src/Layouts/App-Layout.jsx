@@ -8,6 +8,7 @@ import Toast from "../Components/Toast.jsx";
 
 function AppLayout() {
   const user = useSelector((state) => state.auth?.user)
+  const errors = useSelector((state) => state.errors?.value)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,6 +16,12 @@ function AppLayout() {
       navigate(routes.login)
     }
   },[user, navigate])
+
+  useEffect(() => {
+    if(errors.status === 403){
+      navigate(routes.packages)
+    }
+  },[errors])
 
   if (!user) {
     return null;

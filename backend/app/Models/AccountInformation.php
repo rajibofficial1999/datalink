@@ -33,12 +33,6 @@ class AccountInformation extends Model
 
     protected $appends = ['time_for_humans'];
 
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class);
-    }
-
     public function timeForHumans(): Attribute
     {
         return Attribute::make(

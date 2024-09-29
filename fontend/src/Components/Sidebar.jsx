@@ -1,10 +1,25 @@
 import SidebarLink from "./SidebarLink.jsx";
 import { useEffect, useState } from "react";
-import { HomeIcon, UserGroupIcon } from '@heroicons/react/24/solid'
-import { routes } from "../routes/index.js";
 import { useLocation } from "react-router-dom";
 import { cn } from "../utils/index.js";
 import { useSelector } from "react-redux";
+import sidebarlinks from "../utils/sidebarlinks.js";
+import {
+  HomeIcon,
+  ClipboardDocumentListIcon,
+  QueueListIcon,
+  BellAlertIcon,
+  GlobeAltIcon,
+  ListBulletIcon,
+  MegaphoneIcon,
+  PaperClipIcon,
+  PlusCircleIcon,
+  ShieldExclamationIcon,
+  SquaresPlusIcon,
+  TableCellsIcon,
+  UsersIcon,
+  CreditCardIcon
+} from '@heroicons/react/24/solid';
 
 const Sidebar = () => {
 
@@ -12,130 +27,57 @@ const Sidebar = () => {
 
   const location = useLocation()
 
-  const [sidebarLinks, setSidebarLinks] = useState([
-    {
-      'Dashboard': [
-        {
-          name: 'Dashboard',
-          path: routes.home,
-          icon: <HomeIcon className='w-4 h-4'/>
-        },
-        {
-          name: 'Overview',
-          path: routes.overview,
-          icon: <HomeIcon className='w-4 h-4'/>
-        }
-      ]
-    },
-    {
-      name: 'Information',
-      path: routes.accountInformation,
-      icon: <HomeIcon className='w-4 h-4'/>
-    },
-    {
-      'Users' : [
-        {
-          name: 'Lists',
-          path: routes.users,
-          icon: <UserGroupIcon className='w-4 h-4'/>,
-          normalUserCanNotAccess: true,
-        },
-        {
-          name: 'Create',
-          path: routes.createUser,
-          icon: <UserGroupIcon className='w-4 h-4'/>,
-          normalUserCanNotAccess: true,
-        }
-      ]
-    },
-    {
-      'Pending Requests' : [
-        {
-          name: 'Users',
-          path: routes.pendingUsers,
-          icon: <UserGroupIcon className='w-4 h-4'/>,
-          normalUserCanNotAccess: true,
-        },
-        {
-          name: 'Domains',
-          path: routes.pendingDomains,
-          icon: <UserGroupIcon className='w-4 h-4'/>,
-          normalUserCanNotAccess: true,
-        }
-      ]
-    },
-    {
-      'Domains' : [
-        {
-          name: 'Lists',
-          path: routes.domains,
-          icon: <UserGroupIcon className='w-4 h-4'/>,
-          normalUserCanNotAccess: true,
-        },
-        {
-          name: 'Add Domain',
-          path: routes.createDomain,
-          icon: <UserGroupIcon className='w-4 h-4'/>,
-          normalUserCanNotAccess: true,
-        }
-      ]
-    },
-    {
-      name: 'Shortener',
-      path: '/shortener',
-      icon: <HomeIcon className='w-4 h-4'/>
-    },
-    {
-      name: 'Website Urls',
-      path: routes.websiteUrls,
-      icon: <HomeIcon className='w-4 h-4'/>,
-    },
-    {
-      name: 'Notices',
-      path: routes.notices,
-      icon: <HomeIcon className='w-4 h-4'/>
-    },
-    {
-      name: 'Supports',
-      path: routes.supports,
-      icon: <HomeIcon className='w-4 h-4'/>,
-    }
-  ])
+  const [sidebarLinks, setSidebarLinks] = useState(sidebarlinks)
 
+
+  const icons = {
+    HomeIcon: <HomeIcon className='size-4'/>,
+    UsersIcon: <UsersIcon className='size-4'/>,
+    QueueListIcon: <QueueListIcon className='size-4'/>,
+    ClipboardDocumentListIcon: <ClipboardDocumentListIcon className='size-4'/>,
+    GlobeAltIcon: <GlobeAltIcon className='size-4'/>,
+    TableCellsIcon: <TableCellsIcon className='size-4'/>,
+    ListBulletIcon: <ListBulletIcon className='size-4'/>,
+    PaperClipIcon: <PaperClipIcon className='size-4'/>,
+    BellAlertIcon: <BellAlertIcon className='size-4'/>,
+    SquaresPlusIcon: <SquaresPlusIcon className='size-4'/>,
+    MegaphoneIcon: <MegaphoneIcon className='size-4'/>,
+    PlusCircleIcon: <PlusCircleIcon className='size-4'/>,
+    ShieldExclamationIcon: <ShieldExclamationIcon className='size-4'/>,
+    CreditCardIcon: <CreditCardIcon className='size-4'/>,
+  };
+
+
+  const canAccess = (linkOrSection, authUser) => {
+    if (authUser.is_user && linkOrSection.normalUserCanNotAccess) {
+      return false;
+    }
+
+    if (authUser.is_admin && linkOrSection.adminCanNotAccess) {
+      return false;
+    }
+
+    if(authUser.is_admin || authUser.is_user){
+      if (linkOrSection.needSubscription) {
+        if (!authUser.subscription_details || authUser.subscription_details.is_expired) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
 
   const filteredSidebarLinks = sidebarLinks.map(section => {
     if (Array.isArray(Object.values(section)[0])) {
       const sectionKey = Object.keys(section)[0];
-      const links = section[sectionKey].filter(link => {
-        if(authUser.is_user){
-          if(link.normalUserCanNotAccess) {
+      const links = section[sectionKey].filter(link => canAccess(link, authUser));
 
-            return false
-          }
-        }
-
-        if(authUser.is_admin){
-          if(link.adminCanNotAccess) {
-
-            return false
-          }
-        }
-
-        return true
-      });
       return links.length ? { [sectionKey]: links } : null;
+    } else {
+      return canAccess(section, authUser) ? section : null;
     }
-    else {
-      if(authUser.is_user){
-        if(section.normalUserCanNotAccess) {
-
-          return false
-        }
-      }
-
-      return section;
-    }
-  }).filter(Boolean);
+  }).filter(Boolean); // Filter out any null values
 
 
   useEffect(() => {
@@ -154,14 +96,14 @@ const Sidebar = () => {
               link?.name ? (
                 <li key={index} className='my-1'>
                   <SidebarLink to={link.path} className={cn(location.pathname === link.path ? 'bg-base-300' : '')}>
-                    {link?.icon}
+                    {icons[link.icon] && icons[link.icon]}
                     {link?.name}
                   </SidebarLink>
                 </li>
               ) : <li key={index} className='my-1'>
                 <details>
                   <summary className='text-[16px] font-semibold'>
-                    {Object.values(link)[0][0]?.icon}
+                    {icons[Object.values(link)[0][0]?.icon] && icons[Object.values(link)[0][0]?.icon]}
                     {Object.keys(link)[0]}
                   </summary>
                   <ul>
@@ -169,7 +111,7 @@ const Sidebar = () => {
                       Object.values(link)[0].map((item, ind) => (
                         <li key={ind} className='my-1'>
                           <SidebarLink to={item.path} className={cn(location.pathname === item.path ? 'bg-base-300' : '')}>
-                            {item.icon}
+                            {icons[item.icon] && icons[item.icon]}
                             {item.name}
                           </SidebarLink>
                         </li>
@@ -180,7 +122,6 @@ const Sidebar = () => {
                 </details>
               </li>
             ))
-
           }
         </ul>
       </div>

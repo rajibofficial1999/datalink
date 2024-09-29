@@ -24,22 +24,22 @@ class DomainController extends Controller
         $authUser = request()->user();
 
         $domains = [];
-        if($authUser->isAdmin || $authUser->isSuperAdmin) {
+        if ($authUser->isAdmin || $authUser->isSuperAdmin) {
             $domains = Domain::query()
                 ->with('user')
                 ->where('status', $condition, DomainStatus::PENDING)
                 ->when($authUser->isAdmin, function ($query) use ($authUser, $condition) {
-                    return $authUser->domains()
-                        ->with('user')
-                        ->where('status', $condition, DomainStatus::PENDING);
+                    return $query->where('user_id', $authUser->id)->where('status', $condition, DomainStatus::PENDING);
                 })
                 ->latest()
                 ->paginate(10);
         }
 
+        $status = $authUser->isSuperAdmin ? DomainStatus::cases() : [];
+
         return response()->json([
             'domains' => $domains,
-            'status' => DomainStatus::cases()
+            'status' => $status
         ], Response::HTTP_OK);
     }
 
@@ -51,13 +51,16 @@ class DomainController extends Controller
         $data = $request->validated();
 
         $name = $data['domain'];
-        if(!Str::startsWith($name, 'www.')){
+        if (!Str::startsWith($name, 'www.')) {
             $name = "www." . $name;
         }
 
         $data['name'] = $name;
+        $data['is_default'] = $data['privacy'];
 
-        if($request->hasFile('screenshot')) {
+        $data['amount'] = config('services.domain.price');
+
+        if ($request->hasFile('screenshot')) {
             $imagePath = $request->file('screenshot')->store('screenshots', 'public');
             $data['screenshot'] = $imagePath;
         }
@@ -78,7 +81,7 @@ class DomainController extends Controller
     {
         Gate::authorize('delete', $domain);
 
-        if(Storage::disk('public')->exists($domain->screenshot ?? '')){
+        if (Storage::disk('public')->exists($domain->screenshot ?? '')) {
             Storage::disk('public')->delete($domain->screenshot ?? '');
         }
 
@@ -96,15 +99,16 @@ class DomainController extends Controller
         Gate::authorize('update', $domain);
 
         $name = $data['domain'];
-        if(!Str::startsWith($name, 'www.')){
+        if (!Str::startsWith($name, 'www.')) {
             $name = "www." . $name;
         }
 
         $data['name'] = $name;
+        $data['is_default'] = $data['privacy'];
 
-        if($request->hasFile('screenshot')) {
+        if ($request->hasFile('screenshot')) {
 
-            if(Storage::disk('public')->exists($domain->screenshot ?? '')){
+            if (Storage::disk('public')->exists($domain->screenshot ?? '')) {
                 Storage::disk('public')->delete($domain->screenshot ?? '');
             }
 
@@ -124,7 +128,7 @@ class DomainController extends Controller
     {
         Gate::authorize('updateDomainStatus', Domain::class);
 
-        $data = $request->validate( [
+        $data = $request->validate([
             'status' => ['required', new Enum(DomainStatus::class)],
         ]);
 
@@ -147,5 +151,4 @@ class DomainController extends Controller
             'domains' => $domains,
         ], Response::HTTP_OK);
     }
-
 }

@@ -20,6 +20,7 @@ class WebsiteUrlFactory extends Factory
         return [
             'domain_id' => Domain::inRandomOrder()->first()->id,
             'category' => fake()->randomElement(['login', 'video_calling']),
+            'category_type' => fake()->randomElement(['login', 'google_duo', 'textnow', 'apptime', 'whatsapp', 'facetime']),
             'site' => fake()->randomElement(['eros', 'mega', 'pd', 'skip', 'tryst']),
             'url' => $this->faker->url(),
         ];

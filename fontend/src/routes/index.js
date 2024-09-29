@@ -17,4 +17,7 @@ export const routes = {
   createNotice: "/notices/create",
   createSupport: "/supports/create",
   profile: "/profiles",
+  orders: "/orders",
+  pendingOrders: "/pending-orders",
+  packages: "/packages",
 };

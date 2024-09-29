@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'domain' => [
+        'price' => env('DOMAIN_AMOUNT', 10),
+    ],
+
 ];

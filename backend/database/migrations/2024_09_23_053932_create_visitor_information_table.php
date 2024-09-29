@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('state_name')->nullable();
             $table->string('zip_code')->nullable();
             $table->string('user_agent')->nullable();
-            $table->enum('site', ['eros', 'mega', 'pd', 'skip', 'tryst']);
+            $table->string('site');
             $table->timestamps();
         });
     }

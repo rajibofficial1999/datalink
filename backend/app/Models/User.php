@@ -2,19 +2,26 @@
 
 namespace App\Models;
 
+use App\Enums\Package;
 use App\Enums\UserStatus;
+use App\Traits\Users\HasRoles;
+use App\Traits\Users\Relations;
+use App\Traits\Users\SubscriptionDetails;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, BelongsToMany, HasMany, HasOne};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
-
+    use HasFactory,
+        Notifiable,
+        HasApiTokens,
+        HasRoles,
+        Relations,
+        SubscriptionDetails;
 
     protected $fillable = [
         'name',
@@ -25,6 +32,9 @@ class User extends Authenticatable
         'two_step_auth',
         'avatar',
         'email_verified_at',
+        'subscribed_at',
+        'expired_at',
+        'package',
         'status'
     ];
 
@@ -35,7 +45,7 @@ class User extends Authenticatable
     ];
 
 
-    protected $appends = ['is_admin', 'is_super_admin', 'is_user', 'verified_date'];
+    protected $appends = ['is_admin', 'is_super_admin', 'is_user', 'verified_date', 'subscription_details'];
 
 
     protected function casts(): array
@@ -44,73 +54,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'status' => UserStatus::class,
+            'package' => Package::class
         ];
     }
 
     /* Relationships */
 
-    public function team(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'team_id');
-    }
 
-    public function teamMembers(): HasMany
-    {
-        return $this->hasMany(User::class, 'team_id');
-    }
-
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class);
-    }
-
-    public function accounts(): BelongsToMany
-    {
-        return $this->belongsToMany(AccountInformation::class);
-    }
-
-    public function domains(): HasMany
-    {
-        return $this->hasMany(Domain::class);
-    }
-
-    public function supports(): HasMany
-    {
-        return $this->hasMany(Support::class);
-    }
-
-    public function notices(): HasMany
-    {
-        return $this->hasMany(Notice::class);
-    }
-
-    public function otpCode(): HasOne
-    {
-        return $this->hasOne(OtpCode::class);
-    }
 
     /* Custom Attributes */
-
-    public function isAdmin(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => $this->roles->first()?->name === 'admin-user' ?? false
-        );
-    }
-
-    public function isSuperAdmin(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => $this->roles->first()?->name === 'super-admin' ?? false
-        );
-    }
-
-    public function isUser(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => $this->roles->first()?->name === 'normal-user' ?? false
-        );
-    }
 
     public function verifiedDate(): Attribute
     {
@@ -132,10 +84,5 @@ class User extends Authenticatable
     public static function findUserByAccessToken($token): ?User
     {
         return self::where('access_token', $token)->first();
-    }
-
-    public function urls()
-    {
-        return $this->hasManyThrough(WebsiteUrl::class, Domain::class);
     }
 }

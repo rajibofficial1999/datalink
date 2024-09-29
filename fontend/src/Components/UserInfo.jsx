@@ -25,7 +25,7 @@ const UserInfo = ({ fetchPendingUser }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const defaultTableColumns = ['Name', 'Email', 'Role', 'Team', 'Verified', 'Status', 'Action'];
+  const defaultTableColumns = ['Name', 'Email', 'Role', 'Team', 'Verified At', 'Status', 'Action'];
   const [tableColumns, setTableColumns] = useState(defaultTableColumns);
 
   const fetchUsers = async (page = currentPage) => {
@@ -100,6 +100,13 @@ const UserInfo = ({ fetchPendingUser }) => {
     }
   };
 
+  const maskEmail = (email) => {
+    const [namePart, domainPart] = email.split('@');
+    const maskedName = namePart.slice(0, 2) + '*****';
+    const maskedDomain = domainPart.slice(domainPart.lastIndexOf('.'));
+    return maskedName + maskedDomain;
+  };
+
   useEffect(() => {
     pageRefresh();
   }, []);
@@ -131,7 +138,7 @@ const UserInfo = ({ fetchPendingUser }) => {
                   </div>
                 </div>
               </td>
-              <td>{user.email}</td>
+              <td>{maskEmail(user.email)}</td>
               <ForSuperAdmin user={authUser}>
                 <td className="text-nowrap">{user?.roles[0]?.name ?? 'N/A'}</td>
                 <td>

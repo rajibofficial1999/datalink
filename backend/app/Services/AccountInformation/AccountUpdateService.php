@@ -15,6 +15,7 @@ class AccountUpdateService
 
         return [
             'success' => true,
+            'status_code' => 200,
             'account' => $account,
             'account_access_token' => $account->access_token,
         ];

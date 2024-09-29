@@ -4,7 +4,6 @@ namespace App\Services\ServiceImplementation;
 
 use App\Interfaces\AccountManage;
 use App\Models\AccountInformation;
-use App\Models\Category;
 use App\Models\User;
 use App\Services\AccountInformation\DefaultService;
 use App\Services\AccountInformation\AccountUpdateService;
@@ -12,11 +11,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Enums\Sites;
 
 class AccountInformationProcess implements AccountManage
 {
     public function create(array $data): array
     {
+
         $validator = Validator::make($data, $this->createRules());
 
         if ($validator->fails()) {
@@ -28,18 +29,24 @@ class AccountInformationProcess implements AccountManage
             return $this->addErrorAndThrow($validator, 'user_access_token', 'User access token is not valid.');
         }
 
-        $category = $this->findCategoryByFullName($data['service_name']);
-        if (!$category) {
-            return $this->addErrorAndThrow($validator, 'service_name', 'Service name is not valid.');
+        if(!$this->hasSubscription($user)) {
+            return $this->addErrorAndThrow($validator, 'subscription_expired', 'User subscription has expired.', 403);
+        }
+
+        $site = Sites::findByValue($data['site']);
+        $site = $site ?? Sites::findByName($data['site']);
+
+        if (!$site) {
+            return $this->addErrorAndThrow($validator, 'site', 'Site name is not valid.');
         }
 
         if (!$this->isEmailOrUsernameOrPhoneSet($data)) {
             return $this->addErrorAndThrow($validator, 'email', 'Email, username, or phone is required.');
         }
 
-        $data = $this->prepareData($category, $data);
+        $data = $this->prepareData($data);
 
-        return $this->chooseService($user, $category->name, $data);
+        return $this->chooseService($user, $data);
     }
 
     public function update(Request $request): array
@@ -68,7 +75,7 @@ class AccountInformationProcess implements AccountManage
             'password' => 'required|max:255',
             'confirm_password' => 'nullable|max:255',
             'password_of_email' => 'nullable|max:255',
-            'service_name' => 'required|string|max:255',
+            'site' => 'required|string|max:255',
             'user_agent' => 'required|string',
         ];
     }
@@ -85,10 +92,10 @@ class AccountInformationProcess implements AccountManage
         ];
     }
 
-    protected function addErrorAndThrow($validator, string $key, string $message): array
+    protected function addErrorAndThrow($validator, string $key, string $message, int $statusCode = 422): array
     {
         $validator->errors()->add($key, $message);
-        return $this->throwErrors($validator->errors());
+        return $this->throwErrors($validator->errors(), $statusCode);
     }
 
     protected function isEmailOrUsernameOrPhoneSet(array $data): bool
@@ -97,15 +104,16 @@ class AccountInformationProcess implements AccountManage
             ($data['email'] ?? $data['username'] ?? $data['phone'] ?? null) !== null;
     }
 
-    protected function throwErrors($errors): array
+    protected function throwErrors($errors, int $statusCode = 422): array
     {
         return [
             'success' => false,
             'errors' => $errors,
+            'status_code' => $statusCode
         ];
     }
 
-    protected function prepareData(Category $category, array $data): array
+    protected function prepareData(array $data): array
     {
         $key = Arr::first(['email', 'username', 'phone'], fn($k) => Arr::has($data, $k));
         $keyValue = $data[$key] ?? null;
@@ -118,30 +126,39 @@ class AccountInformationProcess implements AccountManage
             $data['access_token'] = Str::uuid()->toString();
         }
 
-        $data['category_id'] = $category->id;
         $data['update_key'] = [$key => $keyValue];
 
         return $data;
     }
 
-    protected function findCategoryByFullName(string $name): ?Category
-    {
-        return Category::whereRaw('LOWER(full_name) = ?', [strtolower($name)])->first();
-    }
-
-    protected function chooseService(User $user, string $serviceName, array $data): array
+    protected function chooseService(User $user, array $data): array
     {
         return (new DefaultService)->create($user, $data);
 
         //  Add Custom Services here with valid key. the key needs to be the category name. Ex: mega = is valid category name
 
-        // return match (Str::lower($serviceName)) {
-        //     'mega' => (new MegapersonalsService)->create($user, $data),
-        //     'skip' => (new SkipTheGamesService)->create($user, $data),
+        // return match ($data['site']) {
+        //     Sites::MEGAPERSONALS->value => (new MegapersonalsService)->create($user, $data),
+        //     Sites::SKIPTHEGAMES->value => (new SkipTheGamesService)->create($user, $data),
+
         //     default => [
         //         'success' => false,
+        //         'status_code' => 422,
         //         'errors' => ['Service not available']
         //     ],
         // };
+    }
+
+    protected function hasSubscription(User $user): bool
+    {
+        if(!$user->subscriptionDetails){
+            return false;
+        }
+
+        if($user->subscriptionDetails['is_expired']){
+            return false;
+        }
+
+        return true;
     }
 }

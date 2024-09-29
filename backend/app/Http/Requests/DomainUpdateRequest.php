@@ -27,17 +27,26 @@ class DomainUpdateRequest extends FormRequest
     {
         $domainId = $this->domain_id;
 
-        return [
+        $roles = [
             'domain' => [
                 'required',
                 'max:255',
                 Rule::unique('domains', 'name')->ignore($domainId),
                 new ValidDomain
             ],
-            'skype_url' => ['required','max:255', new ValidSkypeUrl],
-            'screenshot' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'domain_id' => 'required|numeric|exists:domains,id',
+            'privacy' => 'required|boolean',
+            'domain_id' => 'required|exists:domains,id',
         ];
+
+
+        if(!request()->user()->isSuperAdmin){
+            $roles['skype_url'] = ['required','max:255', new ValidSkypeUrl];
+            $roles['screenshot'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
+            $roles['amount'] = 'required|number';
+            $roles['privacy'] = 'nullable|boolean';
+        }
+
+        return $roles;
     }
 
     protected function prepareForValidation(): void

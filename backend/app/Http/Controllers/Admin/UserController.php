@@ -14,10 +14,12 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -96,6 +98,21 @@ class UserController extends Controller
     public function store(UserStoreRequest $request): JsonResponse
     {
         Gate::authorize('create', User::class);
+
+        if($request->user()->isAdmin) {
+            $packageDetails = $request->user()->package?->details();
+            $memberAbility = Arr::has($packageDetails, 'team') ? $packageDetails['team'] : null;
+
+            if($memberAbility){
+                if($request->user()->teamMembers()->count() >= $memberAbility){
+                    throw ValidationException::withMessages(['package_error' => "You have permission to create only {$memberAbility} users. If want more then update your package."]);
+                }
+            }else{
+                throw ValidationException::withMessages(['package_error' => 'Something went wrong!']);
+            }
+
+        }
+
         $data = $this->prepareUserData($request);
 
         $user = User::create($data);
@@ -156,6 +173,10 @@ class UserController extends Controller
         $data = $request->validate([
             'status' => ['required', new Enum(UserStatus::class)]
         ]);
+
+        if ($user->isAdmin) {
+            $user->teamMembers()->update(['status' => $data['status']]);
+        }
 
         $user->update(['status' => $data['status']]);
 

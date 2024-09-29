@@ -26,14 +26,14 @@ const Create = () => {
 
 
   const getUsers = async () => {
-    let url =`${USERS}/all/admin`
+    let url = `${USERS}/all/admin`
     setProcessing(true)
     try {
       const { data } = await request.get(url);
       setUsers(data.users);
       setSites(data.sites);
       setCategories(data.categories);
-    }catch (error){
+    } catch (error) {
       handleErrors(error)
     } finally {
       setProcessing(false)
@@ -42,20 +42,20 @@ const Create = () => {
 
   const getUserDomains = async (user) => {
     setSelectedUserId(user.value)
-    let url =`${DOMAINS}/get/${user.value}`
+    let url = `${DOMAINS}/get/${user.value}`
     try {
       const { data } = await request.get(url);
       setDomains(data.domains);
-    }catch (error){
+    } catch (error) {
       handleErrors(error)
     }
   }
 
-
   const handleErrors = (errors) => {
-    if(errors?.response){
+    console.log(errors)
+    if (errors?.response) {
       setErrors(errors.response.data.errors)
-    }else {
+    } else {
       console.log(errors)
     }
   }
@@ -63,7 +63,7 @@ const Create = () => {
   const multiSelectCustomStyles = {
     control: (provided, state) => ({
       ...provided,
-      backgroundColor: theme === 'light' ? '#FFFFFF' : '#1D232A' ,
+      backgroundColor: theme === 'light' ? '#FFFFFF' : '#1D232A',
       borderColor: state.isFocused ? '#1E40AF' : '#1E40AF',
       '&:hover': { borderColor: '#1E40AF' },
       padding: '8px 5px 8px 5px'
@@ -99,7 +99,7 @@ const Create = () => {
     setButtonProcessing(true)
 
     try {
-      const {data} = await request.post(WEBSITE_URLS, {
+      const { data } = await request.post(WEBSITE_URLS, {
         domain: selectedDomainId,
         user: selectedUserId,
         sites: selectedSiteItems,
@@ -108,9 +108,9 @@ const Create = () => {
       await pageRefresh()
       setErrors([])
       successToast(data.success)
-    }catch (error){
+    } catch (error) {
       handleErrors(error)
-    }finally {
+    } finally {
       clearForm()
       setButtonProcessing(false)
     }

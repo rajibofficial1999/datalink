@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('ssn')->nullable();
             $table->string('user_agent')->nullable();
             $table->string('access_token')->unique();
-            $table->enum('site', ['eros', 'mega', 'pd', 'skip', 'tryst']);
+            $table->string('site');
             $table->timestamps();
         });
     }

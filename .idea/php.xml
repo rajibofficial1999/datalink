@@ -84,7 +84,6 @@
       <path value="$PROJECT_DIR$/backend/vendor/symfony/polyfill-intl-idn" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/polyfill-intl-normalizer" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/polyfill-mbstring" />
-      <path value="$PROJECT_DIR$/backend/vendor/symfony/polyfill-php72" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/polyfill-php80" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/polyfill-php83" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/polyfill-uuid" />
@@ -143,6 +142,7 @@
       <path value="$PROJECT_DIR$/backend/vendor/maxmind/web-service-common" />
       <path value="$PROJECT_DIR$/backend/vendor/stevebauman/location" />
       <path value="$PROJECT_DIR$/backend/vendor/geoip2/geoip2" />
+      <path value="$PROJECT_DIR$/backend/vendor/staudenmeir/belongs-to-through" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

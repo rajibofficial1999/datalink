@@ -30,6 +30,11 @@ import CreateSupport from "./Pages/Supports/Create.jsx"
 import EditSupport from "./Pages/Supports/Edit.jsx"
 import Profile from "./Pages/Profile.jsx";
 
+import Orders from "./Pages/Orders/Index.jsx";
+import PendingOrders from "./Pages/PendingOrders/Index.jsx";
+
+import Packages from "./Pages/Packages/Index.jsx";
+
 function App() {
   const theme = useSelector((state) => state.theme?.value)
   const dispatch = useDispatch()
@@ -73,7 +78,14 @@ function App() {
           <Route path={routes.createSupport} element={<CreateSupport />}/>
           <Route path={`${routes.supports}/:id`} element={<EditSupport />}/>
 
-          <Route path={routes.profile} element={<Profile />}/>
+          <Route path={routes.profile} element={<Profile />} />
+          
+          <Route path={routes.orders} element={<Orders />} />
+          
+          <Route path={routes.pendingOrders} element={<PendingOrders />} />
+          
+          <Route path={routes.packages} element={<Packages />} />
+          
         </Route>
         <Route element={<GuestLayout />} >
           <Route path={routes.login} element={<Login />}/>

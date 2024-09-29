@@ -8,8 +8,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class AccountInformationController extends Controller
 {
@@ -18,7 +16,6 @@ class AccountInformationController extends Controller
         $authUser = $request->user();
 
         $accounts = AccountInformation::query()
-            ->with('category')
             ->when($authUser->isAdmin, function ($query) use ($authUser) {
                 return $query->whereHas('owners', function ($query) use ($authUser) {
                     return $query->where('user_id', $authUser->id)->orWhere('team_id', $authUser->id);

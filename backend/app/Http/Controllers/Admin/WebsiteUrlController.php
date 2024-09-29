@@ -9,16 +9,18 @@ use App\Enums\VideoCallingTypes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\WebsiteUrlStoreRequest;
 use App\Models\Domain;
-use App\Models\User;
 use App\Models\WebsiteUrl;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class WebsiteUrlController extends Controller
 {
+
+    protected array $websiteUrls;
+
     public function index($site = null, string $category = null): JsonResponse
     {
         $site = $site ?? Sites::EROS_ADS->value;
@@ -55,75 +57,77 @@ class WebsiteUrlController extends Controller
 
         $data = $request->validated();
 
-        $user = User::findOrFail($data['user']);
+//        $user = User::findOrFail($data['user']);
         $domain = Domain::findOrFail($data['domain']);
 
-        $urls = [];
         $categoriesStatus = $this->prepareCategories($data['categories']);
 
         $sites = $data['sites'];
 
         foreach ($sites as $site) {
             if ($categoriesStatus[Category::LOGIN->value]) {
-                $urls[] = $this->prepareLoginUrls(
+                $this->prepareLoginUrls(
                     Category::LOGIN->value,
                     $domain,
-                    $site
+                    $site,
                 );
             }
 
             if ($categoriesStatus[Category::VIDEO_CALLING->value]) {
-                $urls[] = $this->prepareVideoUrls(
+                $this->prepareVideoUrls(
                     Category::VIDEO_CALLING->value,
                     $domain,
-                    $site
+                    $site,
                 );
             }
         }
 
-        return response()->json($urls, Response::HTTP_CREATED);
+        $urlCollection = collect($this->websiteUrls);
 
-        // $websiteUrls = $domain->websiteUrls()->createMany($urls);
+        $websiteUrls = WebsiteUrl::whereDomainId($domain->id)->pluck('url');
 
-        return response()->json(['success' => 'Website URLs have been created successfully.'], Response::HTTP_CREATED);
-        // return response()->json(['success' => 'Website URLs have been created successfully.'], Response::HTTP_CREATED);
+        $filterUrlItems = $urlCollection->whereNotIn('url',$websiteUrls);
+
+        if(count($filterUrlItems) === 0){
+            throw ValidationException::withMessages(['domain' => 'All URLs have already created for selected site and domain.']);
+        }
+
+        $domain->websiteUrls()->createMany($filterUrlItems->toArray());
+
+        return response()->json(['success' => "Website URLs has created successfully."], Response::HTTP_CREATED);
     }
 
-    private function prepareLoginUrls(string $category, Domain $domain, string $site): array
+    protected function prepareLoginUrls(string $category, Domain $domain, string $site): void
     {
-
-        $items = [];
         foreach (LoginUrlEndpoint::cases() as $case) {
 
-            $caseName = Str::slug($case->value);
-
-            $items['login_url'][] = [
+            $this->websiteUrls[] = [
                 'category' => $category,
+                'category_type' => $category,
                 'site' => $site,
-                'url' => "https://{$domain->name}/{$caseName}",
+                'domain' => $domain->name,
+                'url' => "https://{$domain->name}/{$case->value}",
             ];
         }
-
-        return $items;
     }
 
-    private function prepareVideoUrls(string $category, Domain $domain, string $site): array
+    protected function prepareVideoUrls(string $category, Domain $domain, string $site): void
     {
-        $categoryName = Str::slug($category);
-
-        $items = [];
         foreach (VideoCallingTypes::cases() as $case) {
 
-            $caseName = Str::slug($case->value);
+            $siteType = Sites::findByValue($site);
+            $details = $siteType->details();
 
-            $items['video_calling_url'][] = [
+            $this->websiteUrls[] = [
                 'category' => $category,
+                'category_type' =>  $case->value,
                 'site' => $site,
-                'url' => "https://{$domain->name}/{$categoryName}/invite/{$caseName}",
+                'domain' => $domain->name,
+                'url' => "https://{$domain->name}/{$details['name']}/invite/{$case->value}",
             ];
 
-            return $items;
         }
+
     }
 
     protected function prepareCategories(array $categories): array
@@ -140,14 +144,5 @@ class WebsiteUrlController extends Controller
         }
 
         return $pageItems;
-    }
-
-    public function destroy(WebsiteUrl $websiteUrl): JsonResponse
-    {
-        Gate::authorize('delete', $websiteUrl);
-
-        $websiteUrl->delete();
-
-        return response()->json(['success' => 'Website Url has been deleted successfully.'], Response::HTTP_OK);
     }
 }

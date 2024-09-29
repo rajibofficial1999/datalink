@@ -21,13 +21,13 @@ enum Sites: string
 
             self::MEGAPERSONALS => [
                 'name' => "megapersonals",
-                'image' => asset('assets/sites/mega.png'),
+                'image' => asset('assets/sites/mega.jpg'),
                 'redirect_url' => "https://megapersonals.eu/",
             ],
 
             self::PRIVATE_DELIGHTS => [
                 'name' => "privatedelights",
-                'image' => asset('assets/sites/pd.png'),
+                'image' => null,
                 'redirect_url' => "https://privatedelights.ch/",
             ],
 
@@ -49,6 +49,17 @@ enum Sites: string
     {
         foreach (self::cases() as $case) {
             if ($case->value === $value) {
+                return $case;
+            }
+        }    
+            
+        return null;
+    }
+
+    public static function findByName(string $name): ?self
+    {
+        foreach (self::cases() as $case) {
+            if ($case->details()['name'] === $name) {
                 return $case;
             }
         }

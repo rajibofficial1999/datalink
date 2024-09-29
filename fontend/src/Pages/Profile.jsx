@@ -223,7 +223,7 @@ const Profile = () => {
           <InnerSection className='md:col-span-3 p-0'>
             <h1 className='px-6 py-4 text-xl border-b border-base-300'>Personal Information</h1>
             <div className='mt-2 px-6 py-4'>
-              <DefaultForm onSubmit={handleProfileForm}>
+              <DefaultForm onSubmit={handleProfileForm} className='mb-14'>
                 <InputField
                   label="Full Name"
                   name="name"
@@ -248,20 +248,20 @@ const Profile = () => {
                 />
               </DefaultForm>
 
-              <div className='grid grid-cols-2 mt-16 items-center gap-2'>
-                <div>
-                  <p className="font-semibold">Password : </p>
-                  <p className="font-semibold text-nowrap mt-5">Two Step Authentication : </p>
-                </div>
-                <div>
-                  <Button className='py-1 mb-5 bg-gray-400 hover:bg-gray-500' onClick={showPasswordChangeForm}>
+                <div className='grid grid-cols-2 items-center my-4'>
+                  <p className="font-semibold">Change Password : </p>
+                  <Button className='py-1 bg-gray-400 hover:bg-gray-500 w-24' onClick={showPasswordChangeForm}>
                     <KeyIcon className='size-5 mr-1'/> Change
                   </Button>
+                </div>
+                <div className='grid grid-cols-2 items-center my-4'>
+                  <p className="font-semibold text-nowrap">Two Step Authentication : </p>
                   <TwoStepAuthSwitch handleTwoStepAuth={handleTwoStepAuth} twoStepSubmitted={twoStepSubmitted}/>
                 </div>
-              </div>
-
-
+                <div className='grid grid-cols-2 items-center my-4'>
+                  <p className="font-semibold text-nowrap">Remaining Days : </p>
+                  <p>{authUser.subscription_details ? authUser.subscription_details.remaining_time : 0}</p>
+                </div>
             </div>
           </InnerSection>
 

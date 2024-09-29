@@ -145,7 +145,7 @@ const AccountInfo = ({ heading, isForDashboard = false, tableColumns }) => {
                     </th>
                   )}
                   {isForDashboard && <td>{account.id}</td>}
-                  <td><BadgeLarge className='custom-badge'>{account?.category?.name}</BadgeLarge></td>
+                  <td><BadgeLarge className='custom-badge uppercase'>{account?.site}</BadgeLarge></td>
                   <td>
                     <DefaultTooltip value='Copy'>
                       <ClipboardData value={account?.email}>

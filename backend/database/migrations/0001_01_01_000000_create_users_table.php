@@ -22,6 +22,9 @@ return new class extends Migration
             $table->foreignId('team_id')->nullable();
             $table->boolean('two_step_auth')->default(false);
             $table->enum('status', ['pending', 'approved', 'suspended', 'rejected'])->default('pending');
+            $table->timestamp('subscribed_at')->nullable();
+            $table->timestamp('expired_at')->nullable();
+            $table->enum('package', ['starter', 'standard', 'premium'])->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

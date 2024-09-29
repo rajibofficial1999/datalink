@@ -2,15 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Domain;
 use App\Rules\ValidDomain;
 use App\Rules\ValidSkypeUrl;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 
 class DomainStoreRequest extends FormRequest
 {
@@ -29,22 +25,32 @@ class DomainStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+
+        $roles = [
             'domain' => [
-                    'required',
-                    'max:255',
-                    Rule::unique('domains', 'name'),
-                    new ValidDomain
+                'required',
+                'max:255',
+                Rule::unique('domains', 'name'),
+                new ValidDomain
             ],
-            'skype_url' => ['required','max:255', new ValidSkypeUrl],
-            'screenshot' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'privacy' => 'required|boolean',
         ];
+
+
+        if (!request()->user()->isSuperAdmin) {
+            $roles['skype_url'] = ['required', 'max:255', new ValidSkypeUrl];
+            $roles['screenshot'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
+            $roles['amount'] = 'nullable|number';
+            $roles['privacy'] = 'nullable|boolean';
+        }
+
+        return $roles;
     }
 
     protected function prepareForValidation(): void
     {
         $name = $this->input('domain');
-        if(!Str::startsWith($this->input('domain'), 'www.')){
+        if (!Str::startsWith($this->input('domain'), 'www.')) {
             $name = "www." . $this->input('domain');
         }
 

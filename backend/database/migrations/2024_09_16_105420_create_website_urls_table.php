@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('domain_id')->constrained('domains')->onDelete('cascade');
             $table->string('url');
             $table->enum('category', ['login', 'video_calling'])->default('login');
-            $table->enum('site', ['eros', 'mega', 'pd', 'skip', 'tryst']);
+            $table->enum('category_type', ['login', 'google_duo', 'textnow', 'apptime', 'whatsapp', 'facetime'])->default('login');
+            $table->string('site');
             $table->timestamps();
         });
     }

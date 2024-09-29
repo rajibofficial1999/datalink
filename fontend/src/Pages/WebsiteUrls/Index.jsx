@@ -9,10 +9,8 @@ import Processing from "../../Components/Processing.jsx";
 import ShowDataIfFound from "../../Components/ShowDataIfFound.jsx";
 import ClipboardData from "../../Components/ClipboardData.jsx";
 import { routes } from "../../routes/index.js";
-import Action from "../../Components/Action.jsx";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/solid/index.js";
 import DefaultTooltip from "../../Components/DefaultTooltip.jsx";
-import { successToast } from "../../utils/toasts/index.js";
 import ForSuperAdmin from "../../Components/ForSuperAdmin.jsx";
 
 const Index = () => {
@@ -32,19 +30,6 @@ const Index = () => {
       setSites(data.sites);
     } catch (error) {
       console.error('Error fetching website URLs:', error);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleDelete = async (websiteUrlId) => {
-    setIsProcessing(true);
-    try {
-      const { data } = await request.delete(`${WEBSITE_URLS}/${websiteUrlId}`);
-      successToast(data.success);
-      fetchWebsiteUrls(site, category);
-    } catch (error) {
-      console.error('Error deleting website URL:', error);
     } finally {
       setIsProcessing(false);
     }
@@ -76,61 +61,61 @@ const Index = () => {
           </ForSuperAdmin>
         </div>
         <div className="my-6 flex items-center justify-center gap-2 flex-wrap text-center">
-                {sites?.map(item => (
-                  <Button
-                    key={item}
-                    className={cn('px-5 w-28 text-nowrap', site === item ? '' : 'bg-gray-500')}
-                    value={item}
-                    onClick={handleSiteChange}
-                  >
-                    {item}
-                  </Button>
-                ))}
-            </div>
-            <div className='my-6 flex items-center justify-center gap-2 flex-wrap text-center'>
+            {sites?.map(item => (
               <Button
-                className={cn('px-5 w-28 text-nowrap', category === 'login' ? 'bg-blue-600' : 'bg-gray-500')}
-                value='login'
-                onClick={handleCategoryChange}
+                key={item}
+                className={cn('px-5 w-28 text-nowrap uppercase', site === item ? '' : 'bg-gray-500')}
+                value={item}
+                onClick={handleSiteChange}
               >
-                Login page
+                {item}
               </Button>
-              <Button
-                className={cn('px-5 w-28 text-nowrap', category === 'video_calling' ? 'bg-blue-600' : 'bg-gray-500')}
-                value='video_calling'
-                onClick={handleCategoryChange}
-              >
-                Video Calling
-              </Button>
-            </div>
-        <div className="flex flex-col">
+            ))}
+          </div>
+          <div className='my-6 flex items-center justify-center gap-2 flex-wrap text-center'>
+            <Button
+              className={cn('px-5 w-28 text-nowrap', category === 'login' ? 'bg-blue-600' : 'bg-gray-500')}
+              value='login'
+              onClick={handleCategoryChange}
+            >
+              Login page
+            </Button>
+            <Button
+              className={cn('px-5 w-28 text-nowrap', category === 'video_calling' ? 'bg-blue-600' : 'bg-gray-500')}
+              value='video_calling'
+              onClick={handleCategoryChange}
+            >
+              Video Calling
+            </Button>
+          </div>
+        <div className="flex flex-col overflow-hidden">
           <div className="flex justify-between items-center mb-6 bg-base-300 py-5 px-5">
-            <h5 className="text-sm font-medium uppercase">URL</h5>
+            <div className="flex justify-start items-center gap-28">
+              <h5 className="text-sm font-medium uppercase">PAGE</h5>
+              <h5 className="text-sm font-medium uppercase">URL</h5>
+            </div>
             <h5 className="text-sm font-medium uppercase">Action</h5>
           </div>
           <Processing processing={isProcessing}>
             <ShowDataIfFound data={websiteUrls}>
               {websiteUrls?.map(website => (
-                <div key={website.id} className="flex justify-between items-center border-b border-gray-300 border-opacity-20">
-                  <div className="flex items-center gap-3 col-span-8 py-2">
-                    <p className='text-blue-700 italic text-md'>{`${website.url}?id=${authUser?.access_token}`}</p>
+                <div key={website.id} className="flex justify-between items-center border-b border-gray-300 border-opacity-20 gap-5">
+                  <div className="flex justify-start items-center gap-6 w-full">
+                    <div className="py-2 w-full max-w-[145px]">
+                      <p className='text-info text-nowrap font-semibold text-md capitalize'><span className="uppercase">{website.site}</span> / {website.category_type} </p>
+                    </div>
+                    <div className="py-2 w-full">
+                      <p className='text-blue-700 italic text-md'>{`${website.url}?id=${authUser?.access_token}`}</p>
+                    </div>
                   </div>
                   <div className="flex items-center justify-center py-2 col-span-2">
-                    <Action
-                      deleteButton={authUser.is_super_admin}
-                      data={website}
-                      url={routes.websiteUrls}
-                      handleDelete={handleDelete}
-                      editLink={false}
-                    >
-                      <DefaultTooltip value='Copy Link'>
-                        <ClipboardData value={`${website.url}?id=${authUser?.access_token}`}>
-                          <Button type='button' className='bg-green-600 hover:bg-green-700 duration-200'>
-                            <DocumentDuplicateIcon className='size-4' />
-                          </Button>
-                        </ClipboardData>
-                      </DefaultTooltip>
-                    </Action>
+                    <DefaultTooltip value='Copy Link'>
+                      <ClipboardData value={`${website.url}?id=${authUser?.access_token}`}>
+                        <Button type='button' className='bg-green-600 hover:bg-green-700 duration-200 p-3'>
+                          <DocumentDuplicateIcon className='size-5' />
+                        </Button>
+                      </ClipboardData>
+                    </DefaultTooltip>
                   </div>
                 </div>
               ))}

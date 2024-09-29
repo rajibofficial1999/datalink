@@ -19,6 +19,7 @@ class VisitorInformation extends Model
         'state_name',
         'zip_code',
         'user_agent',
+        'site'
     ];
 
     public function owner(): BelongsTo

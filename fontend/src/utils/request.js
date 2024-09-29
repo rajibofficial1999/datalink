@@ -1,5 +1,7 @@
 import axios from "axios";
 import { APP_URL } from "../env/index.js";
+import { store } from "./store/index.js";
+import {addErrors} from "./store/errorsSlice.js";
 
 const request = axios.create({
   baseURL: `${APP_URL}/api/v1`,
@@ -18,6 +20,7 @@ request.interceptors.request.use(function (config) {
 request.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
+  store.dispatch(addErrors(error))
   return Promise.reject(error);
 });
 

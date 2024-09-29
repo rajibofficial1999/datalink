@@ -150,6 +150,10 @@ const Create = () => {
       <Section>
         <Breadcrumbs>Create New User</Breadcrumbs>
         <div className='bg-base-100 text-base-content w-full md:max-w-3xl mx-auto mt-5 p-10'>
+          {
+            errors?.package_error &&
+            <p className='text-center text-red-500 my-2'>{errors?.package_error}</p>
+          }
           <DefaultForm onSubmit={handleSubmit}>
             <Input
               name='name'

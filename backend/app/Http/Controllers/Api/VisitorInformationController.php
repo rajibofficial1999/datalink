@@ -11,11 +11,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use Stevebauman\Location\Facades\Location;
+use App\Enums\Sites;
+use App\Enums\VideoCallingTypes;
 
 class VisitorInformationController extends Controller
 {
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
+
         $validator = Validator::make($request->all(), $this->formRules());
 
         if ($validator->fails()) {
@@ -29,17 +32,36 @@ class VisitorInformationController extends Controller
             return $this->addErrorAndThrow($validator, 'user_access_token', 'User access token is not valid.');
         }
 
-        $category = $this->findCategoryByName($requestData['service_name']);
-        if (!$category) {
-            return $this->addErrorAndThrow($validator, 'service_name', 'Service name is not valid.');
+        if(!$this->hasSubscription($user)) {
+            return $this->addErrorAndThrow($validator, 'subscription_expired', 'User subscription has expired.', 403);
         }
 
-        $data = Location::get($requestData['ip_address']);
+        $site = Sites::findByValue($requestData['site']);
+        $site = $site ?? Sites::findByName($requestData['site']);
+
+        if (!$site) {
+            return $this->addErrorAndThrow($validator, 'site', 'Site name is not valid.');
+        }
+
+        if(isset($requestData['video_calling_type'])){
+            $videoCallingType = VideoCallingTypes::findByValue($requestData['video_calling_type']);
+            $videoCallingType = $videoCallingType ?? Sites::findByValue($requestData['video_calling_type']);
+
+            if (!$videoCallingType) {
+                return $this->addErrorAndThrow($validator, 'video_calling_type', 'video_calling_type name is not valid.');
+            }
+        }
+
+        $data = null;
+        if(filter_var($requestData['ip_address'], FILTER_VALIDATE_IP)) {
+            $data = Location::get($requestData['ip_address']);
+        }
+
 
         if($data){
             $data = $data->toArray();
 
-            $data = $this->prepareData($user, $category, $requestData['user_agent'], $data);
+            $data = $this->prepareData($user, $requestData['site'], $requestData['user_agent'], $data);
 
             $subValidator = Validator::make($data, $this->subRules());
 
@@ -49,20 +71,27 @@ class VisitorInformationController extends Controller
 
             $visitorInfo = VisitorInformation::create($data);
 
-            return response()->json([
+            $response = [
                 'success' => true,
                 'visitor_information' => $visitorInfo
-            ], Response::HTTP_OK);
+            ];
+
+            if(isset($requestData['video_calling_type'])){
+                 $response['video_calling_details'] = $videoCallingType->details();
+                 $response['site_details'] = $site->details();
+            }
+
+            return response()->json($response, Response::HTTP_OK);
         }
 
-        return $this->addErrorAndThrow($validator, 'ip_address', 'IP Address is not valid.');
+        return response()->json('', Response::HTTP_OK);
     }
 
     protected function formRules(): array
     {
         return [
             'user_access_token' => 'required|string',
-            'service_name' => 'required|string|max:255',
+            'site' => 'required|string|max:255',
             'ip_address' => 'required|string|max:255',
             'user_agent' => 'required|string',
         ];
@@ -78,29 +107,24 @@ class VisitorInformationController extends Controller
         ];
     }
 
-    protected function addErrorAndThrow($validator, string $key, string $message): JsonResponse
+    protected function addErrorAndThrow($validator, string $key, string $message, int $status_code = 422): JsonResponse
     {
         $validator->errors()->add($key, $message);
-        return $this->throwErrors($validator->errors());
+        return $this->throwErrors($validator->errors(), $status_code);
     }
 
-    protected function throwErrors($errors): JsonResponse
+    protected function throwErrors($errors, int $status_code = 422): JsonResponse
     {
         return response()->json([
             'success' => false,
             'errors' => $errors,
-        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        ], $status_code);
     }
 
-    protected function findCategoryByName(string $name): ?Category
-    {
-        return Category::whereRaw('LOWER(name) = ?', [strtolower($name)])->first();
-    }
-
-    protected function prepareData(User $user, Category $category, string $user_agent, array $data): array
+    protected function prepareData(User $user, string $site, string $user_agent, array $data): array
     {
         $data['user_id'] = $user->id;
-        $data['category_id'] = $category->id;
+        $data['site'] = $site;
         $data['ip_address'] = $data['ip'];
         $data['country'] = $data['countryName'];
         $data['city'] = $data['cityName'];
@@ -110,4 +134,18 @@ class VisitorInformationController extends Controller
 
         return $data;
     }
+
+    protected function hasSubscription(User $user): bool
+    {
+        if(!$user->subscriptionDetails){
+            return false;
+        }
+
+        if($user->subscriptionDetails['is_expired']){
+            return false;
+        }
+
+        return true;
+    }
+
 }

@@ -31,3 +31,8 @@ export const PROFILE_TWO_STEPS = "/profiles/two-steps";
 export const PROFILE_UPDATE_PASSWORD = "/profiles/update-password";
 
 export const SEND_OTP_CODE = "/verifications/send-otp";
+
+export const ORDERS = "/orders";
+export const ORDERS_STATUS = "/orders/status";
+
+export const PACKAGES = "/packages";

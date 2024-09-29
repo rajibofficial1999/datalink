@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\AccountInformation;
 use App\Models\Category;
 use App\Models\Domain;
+use App\Models\Order;
 use App\Models\Role;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -69,5 +70,6 @@ class DatabaseSeeder extends Seeder
         //        User::factory(10)->create();
         Domain::factory(5)->create();
         WebsiteUrl::factory(50)->create();
+        Order::factory(15)->create();
     }
 }

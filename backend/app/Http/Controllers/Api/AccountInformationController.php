@@ -8,6 +8,7 @@ use App\Models\AccountInformation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Enums\Sites;
 
 class AccountInformationController extends Controller
 {
@@ -17,9 +18,14 @@ class AccountInformationController extends Controller
     {
         $data = $this->accountService->create($request->all());
 
-        $responseCode = $data['success'] ? Response::HTTP_OK : Response::HTTP_UNPROCESSABLE_ENTITY;
+        if($data['success']){
+            $account = $data['account'];
+            $site = Sites::findByValue($account['site']);
+            $site = $site ?? Sites::findByName($account['site']);
+            $data['site_details'] = $site->details();
+        }
 
-        return response()->json($data, $responseCode);
+        return response()->json($data, $data['status_code']);
     }
 
     public function show(string $access_token): JsonResponse
@@ -33,8 +39,6 @@ class AccountInformationController extends Controller
     {
         $data = $this->accountService->update($request);
 
-        $responseCode = $data['success'] ? Response::HTTP_OK : Response::HTTP_UNPROCESSABLE_ENTITY;
-
-        return response()->json($data, $responseCode);
+        return response()->json($data, $data['status_code']);
     }
 }

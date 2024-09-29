@@ -1,4 +1,4 @@
-import { routes } from "./routes/index.js";
+import { routes } from "../routes/index.js";
 
 export default [
   {
@@ -11,7 +11,8 @@ export default [
       {
         name: 'Overview',
         path: routes.overview,
-        icon: 'QueueListIcon'
+        icon: 'QueueListIcon',
+        needSubscription: true
       }
     ]
   },
@@ -106,5 +107,10 @@ export default [
     name: 'Supports',
     path: routes.supports,
     icon: 'MegaphoneIcon',
+  },
+  {
+    name: 'Pricing',
+    path: routes.packages,
+    icon: 'CreditCardIcon',
   }
 ]
