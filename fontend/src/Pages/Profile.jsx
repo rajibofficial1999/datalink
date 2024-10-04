@@ -7,7 +7,6 @@ import Button from "../Components/Button.jsx";
 import { routes } from "../routes/index.js";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { APP_URL } from "../env/index.js";
 import ImageDragDrop from "../Components/ImageDragDrop.jsx";
 import request from "../utils/request.js";
 import {
@@ -23,6 +22,7 @@ import TwoStepAuthSwitch from "../Components/TwoStepAuthSwitch.jsx";
 import { sendOTPCode, verifyOTPCode } from "../utils/index.js";
 
 const Profile = () => {
+  const APP_URL = import.meta.env.VITE_API_URL;
   const authUser = useSelector(state => state.auth.user);
   const dispatch = useDispatch();
 
@@ -258,10 +258,13 @@ const Profile = () => {
                   <p className="font-semibold text-nowrap">Two Step Authentication : </p>
                   <TwoStepAuthSwitch handleTwoStepAuth={handleTwoStepAuth} twoStepSubmitted={twoStepSubmitted}/>
                 </div>
-                <div className='grid grid-cols-2 items-center my-4'>
-                  <p className="font-semibold text-nowrap">Remaining Days : </p>
-                  <p>{authUser.subscription_details ? authUser.subscription_details.remaining_time : 0}</p>
-                </div>
+                {
+                  !authUser.is_super_admin &&
+                  <div className='grid grid-cols-2 items-center my-4'>
+                    <p className="font-semibold text-nowrap">Remaining Days : </p>
+                    <p>{authUser.subscription_details ? authUser.subscription_details.remaining_time : 0}</p>
+                  </div>
+                }
             </div>
           </InnerSection>
 

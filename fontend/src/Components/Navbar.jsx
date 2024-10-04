@@ -8,10 +8,8 @@ import { ADMIN_LOGOUT, NOTIFICATIONS } from "../utils/api-endpoint.js";
 import { clearAuthUser } from "../utils/store/authSlice.js";
 import { routes } from "../routes/index.js";
 import { Link, useNavigate } from "react-router-dom";
-import { APP_URL } from "../env/index.js";
 import LoadImage from "./LoadImage.jsx";
 import { useEffect, useState } from "react";
-import ShowDataIfFound from "./ShowDataIfFound.jsx";
 
 const Navbar = () => {
   const theme = useSelector((state) => state.theme?.value)
@@ -19,6 +17,8 @@ const Navbar = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [notifications, setNotifications] = useState([])
+
+  const APP_URL = import.meta.env.VITE_API_URL;
 
   const manageTheme = (event) => {
     let theme = event.target.value === 'light' ? 'dark' : 'light'

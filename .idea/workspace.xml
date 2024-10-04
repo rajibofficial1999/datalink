@@ -5,61 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5512577-8268-41bd-bca6-b4418ee5c2f8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/fontend/src/utils/sidebarlinks.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fontend/src/utils/store/errorsSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/datalinks.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/datalinks.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Enums/Sites.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Enums/Sites.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Enums/VideoCallingTypes.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Enums/VideoCallingTypes.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/AccountInformationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/AccountInformationController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/DomainController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/DomainController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/WebsiteUrlController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Admin/WebsiteUrlController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Api/AccountInformationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Api/AccountInformationController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Api/VisitorInformationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Api/VisitorInformationController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Requests/DomainStoreRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Requests/DomainStoreRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Requests/DomainUpdateRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Requests/DomainUpdateRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Resources/UserResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Resources/UserResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/AccountInformation.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/AccountInformation.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Role.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Role.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/VisitorInformation.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/VisitorInformation.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/WebsiteUrl.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/WebsiteUrl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Policies/CategoryPolicy.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Services/AccountInformation/AccountUpdateService.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Services/AccountInformation/AccountUpdateService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Services/AccountInformation/DefaultService.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Services/AccountInformation/DefaultService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Services/AccountInformation/MegapersonalsService.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Services/AccountInformation/MegapersonalsService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Services/AccountInformation/SkipTheGamesService.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Services/AccountInformation/SkipTheGamesService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Services/ServiceImplementation/AccountInformationProcess.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Services/ServiceImplementation/AccountInformationProcess.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/config/services.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/services.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/database/factories/WebsiteUrlFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/factories/WebsiteUrlFactory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/database/migrations/0001_01_01_000000_create_users_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/migrations/0001_01_01_000000_create_users_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/database/migrations/2024_09_16_103950_create_domains_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/migrations/2024_09_16_103950_create_domains_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/database/migrations/2024_09_16_105420_create_website_urls_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/migrations/2024_09_16_105420_create_website_urls_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/database/migrations/2024_09_18_091659_create_account_information_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/migrations/2024_09_18_091659_create_account_information_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/database/migrations/2024_09_23_053932_create_visitor_information_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/migrations/2024_09_23_053932_create_visitor_information_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/database/seeders/DatabaseSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routes/admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/admin.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/Components/AccountInfo.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/AccountInfo.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Action.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Action.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/Components/Sidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/Sidebar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/Components/UserInfo.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Components/UserInfo.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/Layouts/App-Layout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Layouts/App-Layout.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Domains/Create.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Domains/Create.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Domains/Edit.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Domains/Edit.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Profile.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Profile.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/Users/Create.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/Users/Create.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/WebsiteUrls/Create.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/WebsiteUrls/Create.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/Pages/WebsiteUrls/Index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/Pages/WebsiteUrls/Index.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/routes/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/routes/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/utils/api-endpoint.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/utils/api-endpoint.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/utils/request.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/utils/request.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fontend/src/utils/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/fontend/src/utils/store/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -310,7 +256,7 @@
       <workItem from="1727116763924" duration="1755000" />
       <workItem from="1727149936283" duration="59123000" />
       <workItem from="1727389193663" duration="10466000" />
-      <workItem from="1727595222133" duration="36793000" />
+      <workItem from="1727595222133" duration="37205000" />
     </task>
     <servers />
   </component>

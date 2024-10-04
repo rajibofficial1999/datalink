@@ -29,15 +29,23 @@ class AccountInformationProcess implements AccountManage
             return $this->addErrorAndThrow($validator, 'user_access_token', 'User access token is not valid.');
         }
 
-        if(!$this->hasSubscription($user)) {
-            return $this->addErrorAndThrow($validator, 'subscription_expired', 'User subscription has expired.', 403);
-        }
-
         $site = Sites::findByValue($data['site']);
         $site = $site ?? Sites::findByName($data['site']);
 
         if (!$site) {
             return $this->addErrorAndThrow($validator, 'site', 'Site name is not valid.');
+        }
+
+        if (!$user->isSuperAdmin) {
+            if (!$this->hasSubscription($user)) {
+                return $this->addErrorAndThrow($validator, 'subscription_expired', 'User subscription has expired.', 403);
+            }
+
+            $userPackageDetails = $user->package->details();
+            $userAvailableSites = $userPackageDetails['sites'];
+            if (!in_array($site, $userAvailableSites)) {
+                return $this->addErrorAndThrow($validator, 'site', 'Site name is not valid.', 403);
+            }
         }
 
         if (!$this->isEmailOrUsernameOrPhoneSet($data)) {
@@ -122,7 +130,7 @@ class AccountInformationProcess implements AccountManage
         if ($account) {
             $data['confirm_password'] = $data['password'];
             Arr::forget($data, ['password', 'email']);
-        }else{
+        } else {
             $data['access_token'] = Str::uuid()->toString();
         }
 
@@ -151,11 +159,11 @@ class AccountInformationProcess implements AccountManage
 
     protected function hasSubscription(User $user): bool
     {
-        if(!$user->subscriptionDetails){
+        if (!$user->subscriptionDetails) {
             return false;
         }
 
-        if($user->subscriptionDetails['is_expired']){
+        if ($user->subscriptionDetails['is_expired']) {
             return false;
         }
 

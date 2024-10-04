@@ -1,7 +1,6 @@
 import ShowDataIfFound from "./ShowDataIfFound.jsx";
 import Table from "./Table.jsx";
 import TableCheckbox from "./TableCheckbox.jsx";
-import { APP_URL } from "../env/index.js";
 import BadgeLarge from "./BadgeLarge.jsx";
 import TabContent from "./TabContent.jsx";
 import TabItem from "./TabItem.jsx";
@@ -20,6 +19,7 @@ import Badge from "./Badge.jsx";
 import { cn, handleMultipleDelete } from "../utils/index.js";
 
 const OrderInfo = ({ fetchPendingOrder }) => {
+  const APP_URL = import.meta.env.VITE_API_URL;
   const authUser = useSelector(state => state.auth.user);
   const [orders, setOrders] = useState([]);
   const [status, setStatus] = useState([]);

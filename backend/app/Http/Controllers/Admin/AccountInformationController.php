@@ -41,19 +41,18 @@ class AccountInformationController extends Controller
         return response()->json($accounts, Response::HTTP_OK);
     }
 
-    public function destroy(AccountInformation $account): JsonResponse
+    public function destroy(AccountInformation $accountInformation): JsonResponse
     {
-        Gate::authorize('delete', $account);
+        Gate::authorize('delete', $accountInformation);
 
         $photos = ['nid_front', 'nid_back', 'selfie'];
 
         foreach ($photos as $photo) {
-            $account->deleteOlderPhoto($account->{$photo} ?? '');
+            $accountInformation->deleteOlderPhoto($accountInformation->{$photo} ?? '');
         }
 
-        $account->delete();
+        $accountInformation->delete();
 
         return response()->json(['success' => 'Record deleted successfully.'], Response::HTTP_OK);
     }
-
 }

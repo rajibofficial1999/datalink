@@ -2,6 +2,7 @@
 
 namespace App\Services\AccountInformation;
 
+use App\Events\AccountInfoPrivateEvent;
 use App\Models\AccountInformation;
 use App\Models\User;
 

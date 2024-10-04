@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AccountInformationController;
 
 Route::prefix('v1')->group(function () {
+    Route::get('/accounts/testing', function () {
+        return response()->json(['message' => 'Testing API'], 200);
+    });
+
     Route::post('/accounts/store', [AccountInformationController::class, 'store']);
 
     Route::post('/accounts/update', [AccountInformationController::class, 'update']);

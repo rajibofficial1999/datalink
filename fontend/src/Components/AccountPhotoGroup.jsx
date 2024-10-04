@@ -3,9 +3,11 @@ import DefaultTooltip from "./DefaultTooltip.jsx";
 import { ArrowDownIcon } from "@heroicons/react/24/outline/index.js";
 import { saveAs } from 'file-saver';
 import axios from "axios";
-import { APP_URL } from "../env/index.js";
 
-const AccountPhotoGroup = ({image}) => {
+const AccountPhotoGroup = ({ image }) => {
+  
+  const APP_URL = import.meta.env.VITE_API_URL;
+
   const handleDownload = async (imageUrl) => {
     try {
       const response = await axios.get(imageUrl, {

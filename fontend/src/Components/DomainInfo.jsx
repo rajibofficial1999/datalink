@@ -1,7 +1,6 @@
 import ShowDataIfFound from "./ShowDataIfFound.jsx";
 import Table from "./Table.jsx";
 import TableCheckbox from "./TableCheckbox.jsx";
-import { APP_URL } from "../env/index.js";
 import BadgeLarge from "./BadgeLarge.jsx";
 import TabContent from "./TabContent.jsx";
 import TabItem from "./TabItem.jsx";
@@ -21,6 +20,7 @@ import { cn, handleMultipleDelete } from "../utils/index.js";
 import ForAdminUser from "./ForAdminUser.jsx";
 
 const DomainInfo = ({ fetchPendingDomain }) => {
+  const APP_URL = import.meta.env.VITE_API_URL;
   const authUser = useSelector(state => state.auth.user);
   const [domains, setDomains] = useState([]);
   const [status, setStatus] = useState([]);

@@ -51,8 +51,8 @@ enum Sites: string
             if ($case->value === $value) {
                 return $case;
             }
-        }    
-            
+        }
+
         return null;
     }
 

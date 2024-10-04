@@ -9,7 +9,6 @@ import { SUPPORTS } from "../../utils/api-endpoint.js";
 import { successToast } from "../../utils/toasts/index.js";
 import ShowDataIfFound from "../../Components/ShowDataIfFound.jsx";
 import LoadImage from "../../Components/LoadImage.jsx";
-import { APP_URL } from "../../env/index.js";
 import Action from "../../Components/Action.jsx";
 import Pagination from "../../Components/Pagination.jsx";
 import ForSuperAdmin from "../../Components/ForSuperAdmin.jsx";
@@ -17,6 +16,7 @@ import { useSelector } from "react-redux";
 import { CurrencyBangladeshiIcon } from "@heroicons/react/24/solid/index.js";
 
 const Index = () => {
+  const APP_URL = import.meta.env.VITE_API_URL;
   const authUser = useSelector(state => state.auth.user);
 
   const [isProcessing, setIsProcessing] = useState(false);

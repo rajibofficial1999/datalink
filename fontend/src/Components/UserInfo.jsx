@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import ShowDataIfFound from "./ShowDataIfFound.jsx";
 import Table from "./Table.jsx";
 import TableCheckbox from "./TableCheckbox.jsx";
-import { APP_URL } from "../env/index.js";
 import TabContent from "./TabContent.jsx";
 import TabItem from "./TabItem.jsx";
 import Action from "./Action.jsx";
@@ -19,6 +18,8 @@ import { handleMultipleDelete } from "../utils/index.js";
 import Badge from "./Badge.jsx";
 
 const UserInfo = ({ fetchPendingUser }) => {
+
+  const APP_URL = import.meta.env.VITE_API_URL;
   const authUser = useSelector(state => state.auth.user);
   const [users, setUsers] = useState([]);
   const [status, setStatus] = useState([]);

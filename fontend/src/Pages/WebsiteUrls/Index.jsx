@@ -88,7 +88,7 @@ const Index = () => {
               Video Calling
             </Button>
           </div>
-        <div className="flex flex-col overflow-hidden">
+        <div className="flex flex-col">
           <div className="flex justify-between items-center mb-6 bg-base-300 py-5 px-5">
             <div className="flex justify-start items-center gap-28">
               <h5 className="text-sm font-medium uppercase">PAGE</h5>
@@ -105,17 +105,29 @@ const Index = () => {
                       <p className='text-info text-nowrap font-semibold text-md capitalize'><span className="uppercase">{website.site}</span> / {website.category_type} </p>
                     </div>
                     <div className="py-2 w-full">
-                      <p className='text-blue-700 italic text-md'>{`${website.url}?id=${authUser?.access_token}`}</p>
+                      {
+                        website.url ?
+                          <p className='text-blue-700 italic text-md'>{`${website.url}?id=${authUser?.access_token}`}</p>
+                          :
+                          <p>Only for premium member.</p>
+                      }
                     </div>
                   </div>
                   <div className="flex items-center justify-center py-2 col-span-2">
-                    <DefaultTooltip value='Copy Link'>
-                      <ClipboardData value={`${website.url}?id=${authUser?.access_token}`}>
-                        <Button type='button' className='bg-green-600 hover:bg-green-700 duration-200 p-3'>
+                    {
+                      website.url ? 
+                        <DefaultTooltip value='Copy Link'>
+                          <ClipboardData value={`${website.url}?id=${authUser?.access_token}`}>
+                            <Button type='button' className='bg-green-600 hover:bg-green-700 duration-200 p-3'>
+                              <DocumentDuplicateIcon className='size-5' />
+                            </Button>
+                          </ClipboardData>
+                        </DefaultTooltip>
+                        :
+                        <Button type='button' className='bg-gray-600 cursor-not-allowed hover:bg-gray-600 duration-200 p-3'>
                           <DocumentDuplicateIcon className='size-5' />
                         </Button>
-                      </ClipboardData>
-                    </DefaultTooltip>
+                    }
                   </div>
                 </div>
               ))}

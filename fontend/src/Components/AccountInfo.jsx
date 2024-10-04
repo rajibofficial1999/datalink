@@ -87,7 +87,6 @@ const AccountInfo = ({ heading, isForDashboard = false, tableColumns }) => {
     setIsProcessing(false)
   }
 
-
   useEffect(() => {
     pageRefresh();
   }, []);

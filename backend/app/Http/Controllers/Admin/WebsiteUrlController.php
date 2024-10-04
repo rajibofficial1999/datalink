@@ -29,6 +29,12 @@ class WebsiteUrlController extends Controller
 
         $authUser = request()->user();
 
+        $userAvailableSites = [];
+        if (!$authUser->isSuperAdmin) {
+            $userPackageDetails = request()->user()->package->details();
+            $userAvailableSites = $userPackageDetails['sites'];
+        }
+
         $domainOwner = $authUser->isUser ? $authUser->team : $authUser;
 
         $domainsWithUrls = Domain::query()
@@ -40,16 +46,25 @@ class WebsiteUrlController extends Controller
             }])
             ->get();
 
-        $websiteUrls = $domainsWithUrls->flatMap(function ($domain) {
-            return $domain->websiteUrls;
+        $websiteUrls = $domainsWithUrls->flatMap(function ($domain) use ($site, $userAvailableSites, $authUser) {
+            return $domain->websiteUrls->map(function ($websiteUrl) use ($site, $userAvailableSites, $authUser) {
+
+                if (!$authUser->isSuperAdmin) {
+                    if (!in_array($site, $userAvailableSites)) {
+                        $websiteUrl['url'] = null;
+                    }
+                }
+
+                return $websiteUrl;
+            });
         });
 
         return response()->json([
             'websiteUrls' => $websiteUrls,
-            'sites' => Sites::cases()
+            'sites' => Sites::cases(),
+            'user' => $site
         ], Response::HTTP_OK);
     }
-
 
     public function store(WebsiteUrlStoreRequest $request): JsonResponse
     {
@@ -57,7 +72,6 @@ class WebsiteUrlController extends Controller
 
         $data = $request->validated();
 
-//        $user = User::findOrFail($data['user']);
         $domain = Domain::findOrFail($data['domain']);
 
         $categoriesStatus = $this->prepareCategories($data['categories']);
@@ -86,9 +100,9 @@ class WebsiteUrlController extends Controller
 
         $websiteUrls = WebsiteUrl::whereDomainId($domain->id)->pluck('url');
 
-        $filterUrlItems = $urlCollection->whereNotIn('url',$websiteUrls);
+        $filterUrlItems = $urlCollection->whereNotIn('url', $websiteUrls);
 
-        if(count($filterUrlItems) === 0){
+        if (count($filterUrlItems) === 0) {
             throw ValidationException::withMessages(['domain' => 'All URLs have already created for selected site and domain.']);
         }
 
@@ -125,9 +139,7 @@ class WebsiteUrlController extends Controller
                 'domain' => $domain->name,
                 'url' => "https://{$domain->name}/{$details['name']}/invite/{$case->value}",
             ];
-
         }
-
     }
 
     protected function prepareCategories(array $categories): array

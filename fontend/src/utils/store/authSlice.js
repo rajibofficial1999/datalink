@@ -1,30 +1,33 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: JSON.parse(localStorage.getItem('payload'))?.user ?? null,
-  token: JSON.parse(localStorage.getItem('payload'))?.token ?? null,
+  user: JSON.parse(sessionStorage.getItem("payload"))?.user ?? null,
+  token: JSON.parse(sessionStorage.getItem("payload"))?.token ?? null,
 };
 
 export const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setAuthUser: (state, action) => {
       state.user = action.payload.user;
-      localStorage.setItem('payload', JSON.stringify(action.payload));
+      sessionStorage.setItem("payload", JSON.stringify(action.payload));
     },
     updateAuthUser: (state, action) => {
       state.user = action.payload;
-      let oldUserStoredData = JSON.parse(localStorage.getItem('payload'))
+      let oldUserStoredData = JSON.parse(sessionStorage.getItem("payload"));
 
-      localStorage.setItem('payload', JSON.stringify({
-        ...oldUserStoredData,
-        user: action.payload
-      }));
+      sessionStorage.setItem(
+        "payload",
+        JSON.stringify({
+          ...oldUserStoredData,
+          user: action.payload,
+        })
+      );
     },
     clearAuthUser: (state) => {
       state.user = null;
-      localStorage.removeItem('payload');
+      sessionStorage.removeItem("payload");
     },
   },
 });

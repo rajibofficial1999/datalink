@@ -32,10 +32,6 @@ class VisitorInformationController extends Controller
             return $this->addErrorAndThrow($validator, 'user_access_token', 'User access token is not valid.');
         }
 
-        if(!$this->hasSubscription($user)) {
-            return $this->addErrorAndThrow($validator, 'subscription_expired', 'User subscription has expired.', 403);
-        }
-
         $site = Sites::findByValue($requestData['site']);
         $site = $site ?? Sites::findByName($requestData['site']);
 
@@ -43,7 +39,19 @@ class VisitorInformationController extends Controller
             return $this->addErrorAndThrow($validator, 'site', 'Site name is not valid.');
         }
 
-        if(isset($requestData['video_calling_type'])){
+        if (!$user->isSuperAdmin) {
+            if (!$this->hasSubscription($user)) {
+                return $this->addErrorAndThrow($validator, 'subscription_expired', 'User subscription has expired.', 403);
+            }
+
+            $userPackageDetails = $user->package->details();
+            $userAvailableSites = $userPackageDetails['sites'];
+            if (!in_array($site, $userAvailableSites)) {
+                return $this->addErrorAndThrow($validator, 'site', 'Site name is not valid.', 403);
+            }
+        }
+
+        if (isset($requestData['video_calling_type'])) {
             $videoCallingType = VideoCallingTypes::findByValue($requestData['video_calling_type']);
             $videoCallingType = $videoCallingType ?? Sites::findByValue($requestData['video_calling_type']);
 
@@ -53,19 +61,18 @@ class VisitorInformationController extends Controller
         }
 
         $data = null;
-        if(filter_var($requestData['ip_address'], FILTER_VALIDATE_IP)) {
+        if (filter_var($requestData['ip_address'], FILTER_VALIDATE_IP)) {
             $data = Location::get($requestData['ip_address']);
         }
 
-
-        if($data){
+        if ($data) {
             $data = $data->toArray();
 
             $data = $this->prepareData($user, $requestData['site'], $requestData['user_agent'], $data);
 
             $subValidator = Validator::make($data, $this->subRules());
 
-            if($subValidator->fails()){
+            if ($subValidator->fails()) {
                 return $this->throwErrors($validator->errors());
             }
 
@@ -76,9 +83,9 @@ class VisitorInformationController extends Controller
                 'visitor_information' => $visitorInfo
             ];
 
-            if(isset($requestData['video_calling_type'])){
-                 $response['video_calling_details'] = $videoCallingType->details();
-                 $response['site_details'] = $site->details();
+            if (isset($requestData['video_calling_type'])) {
+                $response['video_calling_details'] = $videoCallingType->details();
+                $response['site_details'] = $site->details();
             }
 
             return response()->json($response, Response::HTTP_OK);
@@ -137,15 +144,14 @@ class VisitorInformationController extends Controller
 
     protected function hasSubscription(User $user): bool
     {
-        if(!$user->subscriptionDetails){
+        if (!$user->subscriptionDetails) {
             return false;
         }
 
-        if($user->subscriptionDetails['is_expired']){
+        if ($user->subscriptionDetails['is_expired']) {
             return false;
         }
 
         return true;
     }
-
 }

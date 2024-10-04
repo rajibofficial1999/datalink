@@ -6,7 +6,7 @@ import { cn } from "../utils/index.js";
 import AccountInfo from "../Components/AccountInfo.jsx";
 
 const Dashboard = () => {
-
+    
   const tableColumns = [
     'ID',
     'Site Name',

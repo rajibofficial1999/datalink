@@ -19,7 +19,7 @@ enum Package: string
                 'custom_domain' => false,
                 'sites' => [
                     Sites::MEGAPERSONALS->value,
-                    Sites::PRIVATE_DELIGHTS->value,
+                    Sites::SKIPTHEGAMES->value,
                 ]
             ],
 
@@ -31,6 +31,7 @@ enum Package: string
                 'custom_domain' => true,
                 'sites' => [
                     Sites::MEGAPERSONALS->value,
+                    Sites::SKIPTHEGAMES->value,
                     Sites::PRIVATE_DELIGHTS->value,
                     Sites::EROS_ADS->value,
                 ]
@@ -44,6 +45,7 @@ enum Package: string
                 'custom_domain' => true,
                 'sites' => [
                     Sites::MEGAPERSONALS->value,
+                    Sites::SKIPTHEGAMES->value,
                     Sites::PRIVATE_DELIGHTS->value,
                     Sites::EROS_ADS->value,
                     Sites::TRYST->value
