@@ -66,7 +66,7 @@ const Index = () => {
                       <button 
                         key={pkg.name} 
                         type="button" 
-                        className={cn("py-3 px-4 w-full border-y border-l border-base-300 last:border-r last:rounded-r-xl first:rounded-l-xl capitalize", pkg.name === selectedPackage.name && 'bg-base-300')}
+                        className={cn("py-2 px-2 md:py-3 md:px-4 w-full border-y border-l border-base-300 last:border-r last:rounded-r-xl first:rounded-l-xl capitalize", pkg.name === selectedPackage.name && 'bg-base-300')}
                         onClick={() => setSelectedPackage(pkg)}
                       >
                         {pkg.name}

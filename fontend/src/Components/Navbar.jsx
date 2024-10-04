@@ -1,5 +1,5 @@
 import { themeChange } from "theme-change";
-import { MoonIcon, SunIcon } from "@heroicons/react/24/solid/index.js";
+import { Bars3Icon, MoonIcon, SunIcon, XMarkIcon } from "@heroicons/react/24/solid/index.js";
 import { BellIcon } from "@heroicons/react/24/outline/index.js";
 import { useSelector, useDispatch } from 'react-redux'
 import {changeTheme} from "../utils/store/themeSlice.js";
@@ -10,13 +10,15 @@ import { routes } from "../routes/index.js";
 import { Link, useNavigate } from "react-router-dom";
 import LoadImage from "./LoadImage.jsx";
 import { useEffect, useState } from "react";
+import { cn } from "../utils/index.js";
 
-const Navbar = () => {
+const Navbar = ({handleDrawer}) => {
   const theme = useSelector((state) => state.theme?.value)
   const user = useSelector((state) => state.auth?.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [notifications, setNotifications] = useState([])
+  const [isDrawerOpen, setisDrawerOpen] = useState(false)
 
   const APP_URL = import.meta.env.VITE_API_URL;
 
@@ -56,6 +58,11 @@ const Navbar = () => {
     return text
   }
 
+  const handleDrawerOpen = (value) => {
+    setisDrawerOpen(!value)
+    handleDrawer(!value)
+  }
+
   useEffect(() => {
     fetchNotifications()
   }, []);
@@ -63,7 +70,11 @@ const Navbar = () => {
     return (
       <div className="navbar bg-base-100 text-base-content fixed z-40">
         <div className="flex-1">
-          <a className="text-xl pl-5 font-semibold">Admin Dashboard</a>
+          <Link to='/' className="hidden lg:block text-xl pl-5 font-semibold text-nowrap">CYBER DASHBOARD</Link>
+          <button type="button" className="ml-4 lg:hidden flex" onClick={() => handleDrawerOpen(isDrawerOpen)}>
+            <Bars3Icon className={cn("size-7", isDrawerOpen && 'hidden')}/>
+            <XMarkIcon className={cn("size-7", !isDrawerOpen && 'hidden')}/>
+          </button>
         </div>
         <div className="navbar-end">
           <label className="swap swap-rotate" data-key="front-page" data-set-theme="dark">

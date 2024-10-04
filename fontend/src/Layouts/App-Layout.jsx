@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../Components/Sidebar.jsx";
 import Navbar from "../Components/Navbar.jsx";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -37,6 +37,7 @@ function AppLayout() {
   const user = useSelector((state) => state.auth?.user)
   const errors = useSelector((state) => state.errors?.value)
   const navigate = useNavigate();
+  const [isDrawerOpen, setisDrawerOpen] = useState(false)
 
   useEffect(() => {
     if (!user) {
@@ -54,12 +55,17 @@ function AppLayout() {
     return null;
   }
 
+  const handleDrawer = (value) => {
+    setisDrawerOpen(value);
+    
+  }
+
   return (
     <>
       <Toast />
       <div className='h-screen overflow-x-hidden bg-base-300'>
-        <Navbar />
-        <Sidebar />
+        <Navbar handleDrawer={handleDrawer}/>
+        <Sidebar isDrawerOpen={isDrawerOpen} />
         <div className='ml-0 lg:ml-72 mt-20 px-6 pt-1'>
           <Outlet />
         </div>

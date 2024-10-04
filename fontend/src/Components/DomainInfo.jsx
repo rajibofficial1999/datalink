@@ -18,6 +18,7 @@ import ForSuperAdmin from "./ForSuperAdmin.jsx";
 import Badge from "./Badge.jsx";
 import { cn, handleMultipleDelete } from "../utils/index.js";
 import ForAdminUser from "./ForAdminUser.jsx";
+import Modal from "./Modal.jsx";
 
 const DomainInfo = ({ fetchPendingDomain }) => {
   const APP_URL = import.meta.env.VITE_API_URL;
@@ -26,6 +27,7 @@ const DomainInfo = ({ fetchPendingDomain }) => {
   const [status, setStatus] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedImageSrc, setselectedImageSrc] = useState(null)
   const [tableColumns, setTableColumns] = useState([
     'Domain',
     'Payment Screenshot',
@@ -100,17 +102,31 @@ const DomainInfo = ({ fetchPendingDomain }) => {
     setIsProcessing(false)
   }
 
+  const handleViewImage = (src) => {
+    setselectedImageSrc(src);
+    document.querySelector('.imageModal').showModal();
+  };
+
+  const modalDismiss = () => {
+    setselectedImageSrc(null);
+  };
+
   const renderTableRows = () => {
     return domains?.data?.map(domain => (
       <tr key={domain.id}>
         <th>
-          <TableCheckbox value={domain.id}/>
+          <TableCheckbox value={domain.id} />
         </th>
         <td>
           <div className="font-bold">{domain.name}</div>
         </td>
         <td>
-          <LoadImage className='size-14 rounded-md' src={`${APP_URL}/storage/${domain.screenshot}`} alt="screenshot"/>
+          <LoadImage
+            className='size-14 rounded-md cursor-pointer'
+            onClick={() => handleViewImage(`${APP_URL}/storage/${domain.screenshot}`)}
+            src={`${APP_URL}/storage/${domain.screenshot}`}
+            alt="screenshot"
+          />
         </td>
         <td>
           ${domain.amount ?? 0}
@@ -148,6 +164,15 @@ const DomainInfo = ({ fetchPendingDomain }) => {
 
   return (
     <>
+      <Modal className='imageModal' modalDismiss={modalDismiss}>
+        <div className="py-7">
+          <LoadImage
+            className=' max-h-[70vh]'
+            src={selectedImageSrc}
+            alt="payment screenshot"
+          />
+        </div>  
+      </Modal>
       <Processing processing={isProcessing}>
         <ShowDataIfFound data={domains?.data}>
           <Table tableColumns={tableColumns} handleCheckedItems={handleCheckedItems}>

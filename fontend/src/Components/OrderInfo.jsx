@@ -17,6 +17,7 @@ import LoadImage from "./LoadImage.jsx";
 import ForSuperAdmin from "./ForSuperAdmin.jsx";
 import Badge from "./Badge.jsx";
 import { cn, handleMultipleDelete } from "../utils/index.js";
+import Modal from "./Modal.jsx";
 
 const OrderInfo = ({ fetchPendingOrder }) => {
   const APP_URL = import.meta.env.VITE_API_URL;
@@ -25,6 +26,7 @@ const OrderInfo = ({ fetchPendingOrder }) => {
   const [status, setStatus] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+   const [selectedImageSrc, setselectedImageSrc] = useState(null)
   const [tableColumns, setTableColumns] = useState([
     'Package',
     'Payment Screenshot',
@@ -110,6 +112,15 @@ const OrderInfo = ({ fetchPendingOrder }) => {
     setIsProcessing(false)
   }
 
+  const handleViewImage = (src) => {
+    setselectedImageSrc(src);
+    document.querySelector('.imageModal').showModal();
+  };
+
+  const modalDismiss = () => {
+    setselectedImageSrc(null);
+  };
+
   const renderTableRows = () => {
     return orders?.data?.map(order => (
       <tr key={order.id}>
@@ -120,7 +131,13 @@ const OrderInfo = ({ fetchPendingOrder }) => {
           <div className="font-bold capitalize">{order.package}</div>
         </td>
         <td>
-          <LoadImage className='size-14 rounded-md' src={`${APP_URL}/storage/${order.payment_screenshot}`} alt="payment_screenshot"/>
+          <LoadImage
+            className='size-14 rounded-md cursor-pointer'
+            onClick={() => handleViewImage(`${APP_URL}/storage/${order.payment_screenshot}`)}
+            src={`${APP_URL}/storage/${order.payment_screenshot}`}
+            alt="payment_screenshot"
+          />
+          {/* <LoadImage className='size-14 rounded-md' src={`${APP_URL}/storage/${order.payment_screenshot}`} alt="payment_screenshot"/> */}
         </td>
         <td>
           <p className="text-nowrap">{order.amount} BDT</p>
@@ -172,6 +189,16 @@ const OrderInfo = ({ fetchPendingOrder }) => {
 
   return (
     <>
+      <Modal className='imageModal' modalDismiss={modalDismiss}>
+        <div className="py-7">
+          <LoadImage
+            className='max-h-[70vh]'
+            src={selectedImageSrc}
+            alt="payment screenshot"
+        />
+        </div>
+      </Modal>
+
       <Processing processing={isProcessing}>
         <ShowDataIfFound data={orders?.data}>
           <Table tableColumns={tableColumns} handleCheckedItems={handleCheckedItems}>

@@ -48,7 +48,7 @@ class OrderController extends Controller
         $data = $request->validated();
 
 
-        if ($request->hasFile('screenshot')) {
+        if ($request->hasFile('payment_screenshot')) {
             $imagePath = $request->file('payment_screenshot')->store('screenshots', 'public');
             $data['payment_screenshot'] = $imagePath;
         }
@@ -85,7 +85,7 @@ class OrderController extends Controller
 
         $order->update($data);
 
-//        return response()->json(['success' => $r], Response::HTTP_OK);
+        //        return response()->json(['success' => $r], Response::HTTP_OK);
 
         return response()->json(['success' => 'Order status has changed.'], Response::HTTP_OK);
     }
@@ -93,11 +93,11 @@ class OrderController extends Controller
     protected function updateUserSubscription(string $status, Order $order): void
     {
         // If only Status as confirmed in that case
-        if($status === OrderStatus::CONFIRMED->value){
+        if ($status === OrderStatus::CONFIRMED->value) {
 
             $data = $this->prepareSubscribeData($order);
 
-            if($order->user->isAdmin || $order->user->isUser){
+            if ($order->user->isAdmin || $order->user->isUser) {
                 $data['team_id'] = null;
                 $order->user->roles()->sync($data['role_id']);
             }
@@ -124,7 +124,7 @@ class OrderController extends Controller
         $roleName = 'admin-user';
 
         // If selected package is Starter then user Role to be simple-user
-        if($order->package === Package::STARTER){
+        if ($order->package === Package::STARTER) {
             $roleName = 'normal-user';
         }
 
@@ -134,18 +134,18 @@ class OrderController extends Controller
         return $data;
     }
 
-    protected function handleTeamMembers(User $user, Order $order):void
+    protected function handleTeamMembers(User $user, Order $order): void
     {
         $packageDetails = $order->package->details();
         $memberAbility = $packageDetails['team'];
 
-        if($order->package === Package::STARTER){
+        if ($order->package === Package::STARTER) {
             $user->teamMembers()->delete();
         }
 
-        if($order->package === Package::STANDARD || $order->package === Package::PREMIUM){
+        if ($order->package === Package::STANDARD || $order->package === Package::PREMIUM) {
             // deleting members if package users limit is over
-            if($user->teamMembers()->count() > $memberAbility){
+            if ($user->teamMembers()->count() > $memberAbility) {
                 $user->teamMembers()->delete();
             }
         }

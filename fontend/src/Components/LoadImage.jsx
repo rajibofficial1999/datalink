@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { cn } from "../utils/index.js";
 
-const LoadImage = ({ src, alt, className = '' }) => {
+const LoadImage = ({ src, alt, className = '', ...props}) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const handleImageLoad = () => {
@@ -13,6 +13,7 @@ const LoadImage = ({ src, alt, className = '' }) => {
       {!isLoaded && <div className={cn('skeleton size-24', className)}></div>}
 
       <img
+        {...props}
         src={src}
         alt={alt}
         className={cn(className)}

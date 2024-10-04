@@ -21,7 +21,7 @@ import {
   CreditCardIcon
 } from '@heroicons/react/24/solid';
 
-const Sidebar = () => {
+const Sidebar = ({isDrawerOpen}) => {
 
   const authUser = useSelector(state => state.auth.user)
 
@@ -84,12 +84,13 @@ const Sidebar = () => {
     setSidebarLinks(filteredSidebarLinks);
   }, []);
 
+  
 
   return (
-    <div className="drawer lg:drawer-open fixed w-72 shadow-md">
+    <div className={cn("drawer lg:drawer-open fixed w-72 shadow-md z-30", isDrawerOpen && 'drawer-open')}>
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle"/>
       <div className="drawer-side">
-        <ul className="menu bg-base-100 text-base-content min-h-full w-72 p-4 pt-28">
+        <ul className="menu bg-base-100 text-base-content min-h-full w-72 p-4 pt-20">
           <li className='uppercase ml-4 font-bold text-[12px] mb-2'>Menu</li>
           {
             sidebarLinks.map((link, index) => (

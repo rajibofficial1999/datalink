@@ -39,10 +39,10 @@ class DomainUpdateRequest extends FormRequest
         ];
 
 
-        if(!request()->user()->isSuperAdmin){
-            $roles['skype_url'] = ['required','max:255', new ValidSkypeUrl];
+        if (!request()->user()->isSuperAdmin) {
+            $roles['skype_url'] = ['required', 'max:255', new ValidSkypeUrl];
             $roles['screenshot'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
-            $roles['amount'] = 'required|number';
+            $roles['amount'] = 'nullable|number';
             $roles['privacy'] = 'nullable|boolean';
         }
 
@@ -52,7 +52,7 @@ class DomainUpdateRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $name = $this->input('domain');
-        if(!Str::startsWith($this->input('domain'), 'www.')){
+        if (!Str::startsWith($this->input('domain'), 'www.')) {
             $name = "www." . $this->input('domain');
         }
 
